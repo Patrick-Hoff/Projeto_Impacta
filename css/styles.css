@@ -1,0 +1,265 @@
+/* ==========================================================================
+   Auto Dealer — tokens de tema
+   Base: Bootstrap 5.3 (data-bs-theme). Aqui só sobrescrevemos variáveis
+   e criamos as poucas classes que o Bootstrap não cobre (sidebar/topbar).
+   ========================================================================== */
+
+:root,
+[data-bs-theme="dark"] {
+    --ad-bg: #17140f;
+    --ad-panel: #211d17;
+    --ad-panel-alt: #2a2419;
+    --ad-border: #3a3226;
+    --ad-text: #f4efe6;
+    --ad-text-muted: #a69b87;
+    --ad-accent: #e4a33b;
+    --ad-accent-contrast: #1b1610;
+    --ad-secondary: #6f8fa6;
+    --ad-success: #6fa37a;
+
+    --bs-body-bg: var(--ad-bg);
+    --bs-body-color: var(--ad-text);
+    --bs-border-color: var(--ad-border);
+    --bs-primary: var(--ad-accent);
+    --bs-primary-rgb: 228, 163, 59;
+    --bs-link-color: var(--ad-accent);
+    --bs-link-hover-color: #f0b657;
+}
+
+[data-bs-theme="light"] {
+    --ad-bg: #f7f4ee;
+    --ad-panel: #ffffff;
+    --ad-panel-alt: #f0ece2;
+    --ad-border: #e1dacb;
+    --ad-text: #201c15;
+    --ad-text-muted: #6b6355;
+    --ad-accent: #c9852a;
+    --ad-accent-contrast: #ffffff;
+    --ad-secondary: #4c7692;
+    --ad-success: #3f8a55;
+
+    --bs-body-bg: var(--ad-bg);
+    --bs-body-color: var(--ad-text);
+    --bs-border-color: var(--ad-border);
+    --bs-primary: var(--ad-accent);
+    --bs-primary-rgb: 201, 133, 42;
+    --bs-link-color: var(--ad-accent);
+    --bs-link-hover-color: #a86c1f;
+}
+
+body {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--ad-bg);
+    overscroll-behavior-y: none;
+}
+
+h1, h2, h3, h4, .brand, .stat-card__value {
+    font-family: "Barlow Condensed", "Inter", sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+}
+
+/* ==========================================================================
+   Layout shell
+   ========================================================================== */
+
+.app-shell {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+.sidebar,
+.text-bg-sidebar {
+    background-color: var(--ad-panel);
+    color: var(--ad-text);
+}
+
+.sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    padding: 1.25rem 1rem;
+    border-right: 1px solid var(--ad-border);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 1.35rem;
+    color: var(--ad-text) !important;
+    text-decoration: none;
+    padding: 0.4rem 0.6rem 1.25rem;
+}
+
+.brand i {
+    color: var(--ad-accent);
+    font-size: 1.5rem;
+}
+
+.sidebar .nav-link,
+.offcanvas .nav-link {
+    color: var(--ad-text-muted);
+    border-radius: 0.6rem;
+    padding: 0.6rem 0.8rem;
+    font-weight: 500;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.sidebar .nav-link:hover,
+.offcanvas .nav-link:hover {
+    background-color: var(--ad-panel-alt);
+    color: var(--ad-text);
+}
+
+.sidebar .nav-link.active,
+.offcanvas .nav-link.active {
+    background-color: var(--ad-accent);
+    color: var(--ad-accent-contrast);
+}
+
+.sidebar .nav-link.disabled,
+.offcanvas .nav-link.disabled {
+    color: var(--ad-text-muted);
+    opacity: 0.55;
+}
+
+.main-area {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.topbar {
+    background-color: var(--ad-panel);
+    border-bottom: 1px solid var(--ad-border);
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+    padding: 0.75rem 0;
+}
+
+.page-title {
+    font-size: 1.5rem;
+    color: var(--ad-text);
+}
+
+.btn-icon {
+    background: transparent;
+    border: 1px solid var(--ad-border);
+    color: var(--ad-text);
+    width: 42px;
+    height: 42px;
+    border-radius: 0.6rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-icon:hover {
+    background-color: var(--ad-panel-alt);
+    color: var(--ad-text);
+}
+
+.avatar-badge {
+    width: 40px;
+    height: 40px;
+    border-radius: 0.6rem;
+    background-color: var(--ad-panel-alt);
+    color: var(--ad-accent);
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.content-area {
+    padding: 1.25rem;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+@media (min-width: 992px) {
+    .content-area {
+        padding: 2rem;
+    }
+}
+
+/* ==========================================================================
+   Cards / Dashboard
+   ========================================================================== */
+
+.card {
+    background-color: var(--ad-panel);
+    border: 1px solid var(--ad-border);
+}
+
+.stat-card {
+    border-left: 4px solid var(--ad-accent);
+    border-radius: 0.5rem;
+}
+
+.stat-card--secondary { border-left-color: var(--ad-secondary); }
+.stat-card--success { border-left-color: var(--ad-success); }
+
+.stat-card__label {
+    color: var(--ad-text-muted);
+    font-size: 0.85rem;
+    text-transform: none;
+}
+
+.stat-card__value {
+    font-size: 2.1rem;
+    line-height: 1.1;
+}
+
+.stat-card__icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 0.6rem;
+    background-color: var(--ad-panel-alt);
+    color: var(--ad-accent);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+}
+
+/* ==========================================================================
+   Tabela / listagem de veículos
+   ========================================================================== */
+
+.table {
+    --bs-table-bg: var(--ad-panel);
+    --bs-table-color: var(--ad-text);
+    --bs-table-border-color: var(--ad-border);
+    vertical-align: middle;
+}
+
+.table > :not(caption) > * > * {
+    background-color: var(--ad-panel);
+}
+
+.table-hover > tbody > tr:hover > * {
+    background-color: var(--ad-panel-alt);
+}
+
+.vehicle-card {
+    border-radius: 0.5rem;
+    transition: border-color 0.15s ease;
+}
+
+.vehicle-card:hover {
+    border-color: var(--ad-accent);
+}
+
+/* Impede que qualquer conteúdo estoure a largura no mobile */
+img, table {
+    max-width: 100%;
+}

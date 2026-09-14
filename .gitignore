@@ -1,0 +1,36 @@
+# Dependências (Composer)
+/vendor/
+composer.phar
+
+# Variáveis de ambiente / credenciais
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+logs/
+
+# Uploads / arquivos gerados em runtime (ajuste se seu projeto tiver essas pastas)
+/uploads/
+/tmp/
+/cache/
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editores / IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# PHPUnit / testes
+.phpunit.result.cache
+/coverage/
+
+# Outros
+*.bak
+*.swp
