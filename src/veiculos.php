@@ -1,8 +1,11 @@
 <?php
 $pageTitle  = 'Veículos';
 $activePage = 'veiculos';
-require_once __DIR__ . '/../models/veiculo.php';
+require __DIR__ . '/../models/veiculo.php';
 require __DIR__ . '/../template/header.php';
+
+$marcasDisponiveis = array_values(array_unique(array_column($veiculos, 'marca')));
+sort($marcasDisponiveis);
 
 function formatarPreco(float $valor): string
 {
@@ -20,7 +23,10 @@ function badgeStatus(string $status): string
 <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-4">
     <div>
         <h2 class="h4 mb-1">Veículos</h2>
-        <!-- <p class="text-muted mb-0"><?= count($veiculosList) ?> veículos cadastrados no estoque.</p> -->
+        <p class="text-muted mb-0">
+            <?= number_format($totalVeiculos, 0, ',', '.') ?>
+            veículos encontrados.
+        </p>
     </div>
     <a href="cadastrar-veiculo.php" class="btn btn-primary d-inline-flex align-items-center gap-2">
         <i class="bi bi-plus-lg"></i> Novo veículo
@@ -28,38 +34,76 @@ function badgeStatus(string $status): string
 </div>
 
 <!-- Filtros -->
-<div class="card mb-3">
+<form method="GET" action="" class="card mb-3">
     <div class="card-body">
         <div class="row g-2">
+
             <div class="col-12 col-md-5">
                 <div class="input-group">
-                    <span class="input-group-text bg-transparent border-end-0"><i class="bi bi-search"></i></span>
-                    <input type="search" id="filtroBusca" class="form-control border-start-0 ps-0" placeholder="Buscar por marca ou modelo...">
+                    <span class="input-group-text bg-transparent border-end-0">
+                        <i class="bi bi-search"></i>
+                    </span>
+
+                    <input
+                        type="search"
+                        name="busca"
+                        class="form-control border-start-0 ps-0"
+                        placeholder="Buscar por marca ou modelo..."
+                        value="<?= htmlspecialchars($busca) ?>">
                 </div>
             </div>
+
             <div class="col-6 col-md-3">
-                <select id="filtroStatus" class="form-select">
+                <select name="status" class="form-select">
                     <option value="">Todos os status</option>
-                    <option value="disponivel">Disponível</option>
-                    <option value="vendido">Vendido</option>
+
+                    <option
+                        value="disponivel"
+                        <?= $status === 'disponivel' ? 'selected' : '' ?>>
+                        Disponível
+                    </option>
+
+                    <option
+                        value="vendido"
+                        <?= $status === 'vendido' ? 'selected' : '' ?>>
+                        Vendido
+                    </option>
                 </select>
             </div>
+
             <div class="col-6 col-md-3">
-                <select id="filtroMarca" class="form-select">
+                <select name="marca" class="form-select">
                     <option value="">Todas as marcas</option>
-                    <?php foreach ($marcasDisponiveis as $marca): ?>
-                        <option value="<?= htmlspecialchars($marca) ?>"><?= htmlspecialchars($marca) ?></option>
+
+                    <?php foreach ($marcasDisponiveis as $marcaItem): ?>
+
+                        <option
+                            value="<?= htmlspecialchars($marcaItem) ?>"
+                            <?= $marca === $marcaItem ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($marcaItem) ?>
+                        </option>
+
                     <?php endforeach; ?>
                 </select>
             </div>
+
             <div class="col-12 col-md-1 d-grid">
-                <button type="button" id="filtroLimpar" class="btn btn-outline-secondary" title="Limpar filtros">
-                    <i class="bi bi-x-lg"></i>
-                </button>
+                <a href="veiculos.php" class="btn btn-outline-secondary">
+                    Limpar
+                </a>
+
             </div>
+            <button
+                type="submit"
+                class="btn btn-primary"
+                title="Pesquisar">
+                <i class="bi bi-search"></i>
+            </button>
+
         </div>
     </div>
-</div>
+</form>
+
 
 <!-- Tabela (desktop / tablet) -->
 <div class="card d-none d-md-block">
@@ -78,7 +122,7 @@ function badgeStatus(string $status): string
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($veiculosList as $v): ?>
+                <?php foreach ($veiculos as $v): ?>
                     <tr data-marca="<?= htmlspecialchars($v['marca']) ?>" data-status="<?= $v['status'] ?>" data-busca="<?= htmlspecialchars(strtolower($v['marca'] . ' ' . $v['modelo'])) ?>">
                         <td><?= htmlspecialchars($v['marca']) ?></td>
                         <td><?= htmlspecialchars($v['modelo']) ?></td>
@@ -91,7 +135,13 @@ function badgeStatus(string $status): string
                             <a href="editar-veiculo.php?id=<?= $v['id'] ?>" class="btn btn-icon btn-sm" title="Editar">
                                 <i class="bi bi-pencil"></i>
                             </a>
-                            <button type="button" class="btn btn-icon btn-sm" title="Excluir">
+                            <button type="button"
+                                class="btn btn-icon btn-sm btn-excluir"
+                                title="Excluir"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalExcluir"
+                                data-id="<?= $v['id'] ?>"
+                                data-nome="<?= htmlspecialchars($v['marca'] . ' ' . $v['modelo']) ?>">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </td>
@@ -105,7 +155,7 @@ function badgeStatus(string $status): string
 
 <!-- Cards (mobile) -->
 <div class="row g-3 d-md-none" id="cardsVeiculos">
-    <?php foreach ($veiculosList as $v): ?>
+    <?php foreach ($veiculos as $v): ?>
         <div class="col-12" data-marca="<?= htmlspecialchars($v['marca']) ?>" data-status="<?= $v['status'] ?>" data-busca="<?= htmlspecialchars(strtolower($v['marca'] . ' ' . $v['modelo'])) ?>">
             <div class="card vehicle-card">
                 <div class="card-body">
@@ -122,7 +172,13 @@ function badgeStatus(string $status): string
                             <a href="editar-veiculo.php?id=<?= $v['id'] ?>" class="btn btn-icon btn-sm" title="Editar">
                                 <i class="bi bi-pencil"></i>
                             </a>
-                            <button type="button" class="btn btn-icon btn-sm" title="Excluir">
+                            <button type="button"
+                                class="btn btn-icon btn-sm btn-excluir"
+                                title="Excluir"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalExcluir"
+                                data-id="<?= $v['id'] ?>"
+                                data-nome="<?= htmlspecialchars($v['marca'] . ' ' . $v['modelo']) ?>">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </div>
@@ -134,60 +190,85 @@ function badgeStatus(string $status): string
     <p class="text-muted text-center py-4 mb-0 d-none" id="cardsVazio">Nenhum veículo encontrado com esse filtro.</p>
 </div>
 
+<!-- Paginação -->
+<?php if ($totalPaginas > 1): ?>
+    <nav aria-label="Paginação de veículos" class="mt-4">
+        <ul class="pagination justify-content-center mb-0">
+
+            <?php
+            function urlPagina(int $pagina): string
+            {
+                $params = $_GET;
+                $params['pagina'] = $pagina;
+                return '?' . http_build_query($params);
+            }
+            ?>
+
+            <li class="page-item <?= $paginaAtual <= 1 ? 'disabled' : '' ?>">
+                <a class="page-link" href="<?= urlPagina($paginaAtual - 1) ?>" aria-label="Anterior">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            </li>
+
+            <?php for ($p = 1; $p <= $totalPaginas; $p++): ?>
+                <li class="page-item <?= $p === $paginaAtual ? 'active' : '' ?>">
+                    <a class="page-link" href="<?= urlPagina($p) ?>"><?= $p ?></a>
+                </li>
+            <?php endfor; ?>
+
+            <li class="page-item <?= $paginaAtual >= $totalPaginas ? 'disabled' : '' ?>">
+                <a class="page-link" href="<?= urlPagina($paginaAtual + 1) ?>" aria-label="Próxima">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+
+        </ul>
+    </nav>
+<?php endif; ?>
+
+
+<div class="modal fade" id="modalExcluir" tabindex="-1" aria-labelledby="modalExcluirLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title h5" id="modalExcluirLabel">Excluir veículo</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+
+            <div class="modal-body">
+                <p class="mb-0">
+                    Excluir <strong id="modalExcluirNome"></strong> do estoque?
+                    Essa ação não pode ser desfeita.
+                </p>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+
+                <form method="POST" action="../models/veiculo.php" class="d-inline">
+                    <input type="hidden" name="id" id="modalExcluirId">
+                    <input type="hidden" name="type" value="delete">
+                    <button type="submit" class="btn btn-danger d-inline-flex align-items-center gap-2">
+                        <i class="bi bi-trash"></i> Excluir veículo
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <?php
 $pageScript = <<<'JS'
 (function () {
-    var busca = document.getElementById('filtroBusca');
-    var status = document.getElementById('filtroStatus');
-    var marca = document.getElementById('filtroMarca');
-    var limpar = document.getElementById('filtroLimpar');
+    var modal = document.getElementById('modalExcluir');
 
-    var linhas = document.querySelectorAll('#tabelaVeiculos tbody tr');
-    var cards = document.querySelectorAll('#cardsVeiculos > [data-busca]');
-    var tabelaVazia = document.getElementById('tabelaVazia');
-    var cardsVazio = document.getElementById('cardsVazio');
-
-    function aplicarFiltro() {
-        var termo = busca.value.trim().toLowerCase();
-        var statusVal = status.value;
-        var marcaVal = marca.value;
-        var visiveisTabela = 0;
-        var visiveisCards = 0;
-
-        function corresponde(el) {
-            var okBusca = !termo || el.dataset.busca.indexOf(termo) !== -1;
-            var okStatus = !statusVal || el.dataset.status === statusVal;
-            var okMarca = !marcaVal || el.dataset.marca === marcaVal;
-            return okBusca && okStatus && okMarca;
-        }
-
-        linhas.forEach(function (linha) {
-            var visivel = corresponde(linha);
-            linha.classList.toggle('d-none', !visivel);
-            if (visivel) visiveisTabela++;
-        });
-
-        cards.forEach(function (card) {
-            var visivel = corresponde(card);
-            card.classList.toggle('d-none', !visivel);
-            if (visivel) visiveisCards++;
-        });
-
-        tabelaVazia.classList.toggle('d-none', visiveisTabela !== 0);
-        cardsVazio.classList.toggle('d-none', visiveisCards !== 0);
-    }
-
-    [busca, status, marca].forEach(function (el) {
-        el.addEventListener('input', aplicarFiltro);
-    });
-
-    limpar.addEventListener('click', function () {
-        busca.value = '';
-        status.value = '';
-        marca.value = '';
-        aplicarFiltro();
+    modal.addEventListener('show.bs.modal', function (event) {
+        var botao = event.relatedTarget;
+        document.getElementById('modalExcluirId').value = botao.dataset.id;
+        document.getElementById('modalExcluirNome').textContent = botao.dataset.nome;
     });
 })();
 JS;
+
 require __DIR__ . '/../template/footer.php';
 ?>

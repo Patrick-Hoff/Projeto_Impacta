@@ -65,8 +65,21 @@ if (!empty($data)) {
         $stmt->execute();
         header("Location: ../src/veiculos.php");
         exit;
+    } else if ($data["type"] === "delete") {
+
+        $id = $data["id"];
+
+        $query = "DELETE FROM veiculos WHERE id = :id";
+        $stmt = $pdo->prepare($query);
+        $stmt->bindParam(":id", $id);
+
+        $stmt->execute();
+        header("Location: ../src/veiculos.php");
+        exit;
     }
 } else {
+
+    // Verificação edit
     $id = $_GET["id"] ?? null;
 
     if ($id) {
@@ -76,19 +89,205 @@ if (!empty($data)) {
         $veiculo = $stmt->fetch();
     }
 
-    // SELECT
-    $query = "SELECT * FROM veiculos";
+    // =====================================================
+    // PAGINAÇÃO
+    // =====================================================
 
-    $stmt = $pdo->prepare($query);
-    $stmt->execute();
+    $porPagina = 10;
 
-    $veiculosList = $stmt->fetchAll();
-
-    $marcasDisponiveis = array_values(
-        array_unique(
-            array_column($veiculosList, 'marca')
-        )
+    $paginaAtual = filter_input(
+        INPUT_GET,
+        'pagina',
+        FILTER_VALIDATE_INT
     );
 
-    sort($marcasDisponiveis);
+    if (!$paginaAtual || $paginaAtual < 1) {
+        $paginaAtual = 1;
+    }
+
+
+    // =====================================================
+    // FILTROS
+    // =====================================================
+
+    $busca = trim($_GET['busca'] ?? '');
+    $status = trim($_GET['status'] ?? '');
+    $marca = trim($_GET['marca'] ?? '');
+
+
+    // =====================================================
+    // MONTAR WHERE
+    // =====================================================
+
+    $where = [];
+    $params = [];
+
+
+    // Busca por marca ou modelo
+    if ($busca !== '') {
+
+        $where[] = "
+        (
+            marca LIKE :busca_marca
+            OR modelo LIKE :busca_modelo
+        )
+    ";
+
+        $termoBusca = '%' . $busca . '%';
+
+        $params[':busca_marca'] = $termoBusca;
+        $params[':busca_modelo'] = $termoBusca;
+    }
+
+
+    // Filtro por status
+    if ($status !== '') {
+
+        $where[] = 'status = :filtro_status';
+
+        $params[':filtro_status'] = $status;
+    }
+
+
+    // Filtro por marca
+    if ($marca !== '') {
+
+        $where[] = 'marca = :filtro_marca';
+
+        $params[':filtro_marca'] = $marca;
+    }
+
+
+    $whereSql = '';
+
+    if (!empty($where)) {
+
+        $whereSql = 'WHERE ' . implode(
+            ' AND ',
+            $where
+        );
+    }
+
+
+    // =====================================================
+    // CONSULTAR TOTAL
+    // =====================================================
+
+    try {
+
+        $queryTotal = "
+        SELECT COUNT(*)
+        FROM veiculos
+        $whereSql
+    ";
+
+        $stmtTotal = $pdo->prepare($queryTotal);
+
+        foreach ($params as $param => $valor) {
+
+            $stmtTotal->bindValue(
+                $param,
+                $valor
+            );
+        }
+
+        $stmtTotal->execute();
+
+        $totalVeiculos = (int) $stmtTotal->fetchColumn();
+
+
+        // =================================================
+        // CALCULAR PAGINAÇÃO
+        // =================================================
+
+        $totalPaginas = max(
+            1,
+            (int) ceil(
+                $totalVeiculos / $porPagina
+            )
+        );
+
+
+        if ($paginaAtual > $totalPaginas) {
+
+            $paginaAtual = $totalPaginas;
+        }
+
+
+        $offset = (
+            $paginaAtual - 1
+        ) * $porPagina;
+
+
+        // =================================================
+        // CONSULTAR VEÍCULOS
+        // =================================================
+
+        $query = "
+        SELECT *
+        FROM veiculos
+        $whereSql
+        ORDER BY id DESC
+        LIMIT :limite
+        OFFSET :offset
+    ";
+
+        $stmt = $pdo->prepare($query);
+
+
+        foreach ($params as $param => $valor) {
+
+            $stmt->bindValue(
+                $param,
+                $valor
+            );
+        }
+
+
+        $stmt->bindValue(
+            ':limite',
+            $porPagina,
+            PDO::PARAM_INT
+        );
+
+        $stmt->bindValue(
+            ':offset',
+            $offset,
+            PDO::PARAM_INT
+        );
+
+
+        $stmt->execute();
+
+        $veiculos = $stmt->fetchAll(
+            PDO::FETCH_ASSOC
+        );
+    } catch (PDOException $e) {
+
+        die('Erro ao consultar veículos: ' .
+            $e->getMessage());
+    }
+
+
+    // =====================================================
+    // MARCAS DISPONÍVEIS
+    // =====================================================
+
+    try {
+
+        $stmtMarcas = $pdo->query("
+        SELECT DISTINCT marca
+        FROM veiculos
+        WHERE marca IS NOT NULL
+        AND marca <> ''
+        ORDER BY marca ASC
+    ");
+
+        $marcasDisponiveis = $stmtMarcas->fetchAll(
+            PDO::FETCH_COLUMN
+        );
+    } catch (PDOException $e) {
+
+        $marcasDisponiveis = [];
+    }
 }
