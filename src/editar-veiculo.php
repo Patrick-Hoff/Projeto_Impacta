@@ -37,46 +37,57 @@ require __DIR__ . '/../template/header.php';
                 <div class="col-12 col-md-6">
                     <label for="marca" class="form-label">Marca</label>
                     <input type="text" class="form-control" id="marca" name="marca" required
-                           value="<?= htmlspecialchars($veiculo['marca']) ?>">
+                        value="<?= htmlspecialchars($veiculo['marca']) ?>">
                     <div class="invalid-feedback">Informe a marca do veículo.</div>
                 </div>
                 <div class="col-12 col-md-6">
                     <label for="modelo" class="form-label">Modelo</label>
                     <input type="text" class="form-control" id="modelo" name="modelo" required
-                           value="<?= htmlspecialchars($veiculo['modelo']) ?>">
+                        value="<?= htmlspecialchars($veiculo['modelo']) ?>">
                     <div class="invalid-feedback">Informe o modelo do veículo.</div>
                 </div>
 
                 <div class="col-12 col-md-6">
                     <label for="ano" class="form-label">Ano</label>
-                    <input type="number" class="form-control" id="ano" name="ano" min="1950" max="<?= date('Y') + 1 ?>" required
-                           value="<?= htmlspecialchars($veiculo['ano']) ?>">
+                    <input type="number" class="form-control" id="ano" name="ano" min="1950" max="<?= date('Y') + 1 ?>" inputmode="numeric" required
+                        value="<?= htmlspecialchars($veiculo['ano']) ?>">
                     <div class="invalid-feedback">Informe um ano válido.</div>
                 </div>
                 <div class="col-12 col-md-6">
                     <label for="cor" class="form-label">Cor</label>
                     <input type="text" class="form-control" id="cor" name="cor" required
-                           value="<?= htmlspecialchars($veiculo['cor']) ?>">
+                        value="<?= htmlspecialchars($veiculo['cor']) ?>">
                     <div class="invalid-feedback">Informe a cor do veículo.</div>
                 </div>
 
                 <div class="col-12 col-md-6">
-                    <label for="quilometragem" class="form-label">Quilometragem</label>
+                    <label for="quilometragemDisplay" class="form-label">Quilometragem</label>
                     <div class="input-group">
-                        <input type="number" class="form-control" id="quilometragem" name="quilometragem" min="0" required
-                               value="<?= htmlspecialchars($veiculo['quilometragem']) ?>">
+                        <input type="text"
+                            class="form-control"
+                            id="quilometragemDisplay"
+                            inputmode="numeric"
+                            autocomplete="off"
+                            required>
                         <span class="input-group-text">km</span>
                         <div class="invalid-feedback">Informe a quilometragem.</div>
                     </div>
+                    <input type="hidden" name="quilometragem" id="quilometragem">
                 </div>
+
                 <div class="col-12 col-md-6">
-                    <label for="preco" class="form-label">Preço</label>
+                    <label for="precoDisplay" class="form-label">Preço</label>
                     <div class="input-group">
                         <span class="input-group-text">R$</span>
-                        <input type="number" class="form-control" id="preco" name="preco" min="0" step="0.01" required
-                               value="<?= htmlspecialchars($veiculo['preco']) ?>">
+                        <input type="text"
+                            class="form-control"
+                            id="precoDisplay"
+                            inputmode="numeric"
+                            autocomplete="off"
+                            required>
                         <div class="invalid-feedback">Informe o preço do veículo.</div>
                     </div>
+                    <input type="hidden" name="preco" id="preco">
                 </div>
 
                 <div class="col-12 col-md-6">
@@ -103,17 +114,13 @@ require __DIR__ . '/../template/header.php';
 </div>
 
 <?php
-$pageScript = <<<'JS'
-(function () {
-    var form = document.getElementById('formVeiculo');
-    form.addEventListener('submit', function (event) {
-        if (!form.checkValidity()) {
-            event.preventDefault();
-            event.stopPropagation();
-        }
-        form.classList.add('was-validated');
+$pageScript = <<<JS
+document.addEventListener('DOMContentLoaded', function () {
+    iniciarFormVeiculo({
+        quilometragem: {$veiculo['quilometragem']},
+        preco: {$veiculo['preco']}
     });
-})();
+});
 JS;
 require __DIR__ . '/../template/footer.php';
 ?>
