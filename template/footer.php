@@ -1,5 +1,5 @@
 </main>
-    </div>
+</div>
 </div>
 
 <!-- Bootstrap JS -->
@@ -9,8 +9,19 @@
 <script src="../js/theme.js"></script>
 
 <?php if (!empty($pageScript)): ?>
-<script><?= $pageScript ?></script>
+    <script>
+        <?= $pageScript ?>
+    </script>
 <?php endif; ?>
 
+<script>
+    document.querySelectorAll('.alert-dismissible').forEach(function(el) {
+        setTimeout(function() {
+            bootstrap.Alert.getOrCreateInstance(el).close();
+        }, 4000);
+    });
+</script>
+
 </body>
+
 </html>

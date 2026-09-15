@@ -1,4 +1,5 @@
 <?php
+
 $pageTitle  = 'Dashboard';
 $activePage = 'dashboard';
 require __DIR__ . '/../template/header.php';
@@ -37,6 +38,7 @@ function badgeStatus(string $status): string
 <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-4">
     <div>
         <h2 class="h4 mb-1">Visão geral</h2>
+        <h3>Em desenvolvimento</h3>
         <p class="text-muted mb-0">Resumo do estoque da loja em tempo real.</p>
     </div>
     <a href="cadastrar-veiculo.php" class="btn btn-primary d-inline-flex align-items-center gap-2">

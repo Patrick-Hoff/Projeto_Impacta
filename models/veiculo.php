@@ -1,5 +1,5 @@
 <?php
-
+require_once __DIR__ . '/../config/flash.php';
 include_once __DIR__ . "/../config/connection.php";
 
 $data = $_POST;
@@ -34,6 +34,7 @@ if (!empty($data)) {
 
         $stmt->execute();
 
+        definirMensagem("sucesso", "Veículo cadastrado com sucesso!");
         header("Location: ../src/veiculos.php");
         exit;
     } else if ($data["type"] === "update") {
@@ -63,6 +64,8 @@ if (!empty($data)) {
         $stmt->bindParam(":status", $status);
 
         $stmt->execute();
+
+        definirMensagem("sucesso", "Veículo atualizado com sucesso!");
         header("Location: ../src/veiculos.php");
         exit;
     } else if ($data["type"] === "delete") {
@@ -74,6 +77,8 @@ if (!empty($data)) {
         $stmt->bindParam(":id", $id);
 
         $stmt->execute();
+
+        definirMensagem("sucesso", "Veículo excluído com sucesso!");
         header("Location: ../src/veiculos.php");
         exit;
     }

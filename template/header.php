@@ -1,10 +1,5 @@
 <?php
-/**
- * Header / layout shell
- * Variáveis esperadas antes do include:
- *   $pageTitle  (string) - título da página, ex: "Veículos"
- *   $activePage (string) - chave do menu ativo: 'dashboard' | 'veiculos' | 'clientes' | 'vendas'
- */
+require_once __DIR__ . '/../config/flash.php';
 $pageTitle  = $pageTitle ?? 'Dashboard';
 $activePage = $activePage ?? 'dashboard';
 
@@ -38,6 +33,7 @@ function renderNavItems(array $items, string $active): void
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR" data-bs-theme="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -45,7 +41,7 @@ function renderNavItems(array $items, string $active): void
 
     <!-- Evita flash de tema errado ao carregar -->
     <script>
-        (function () {
+        (function() {
             var saved = localStorage.getItem('auto-dealer-theme');
             if (saved === 'light' || saved === 'dark') {
                 document.documentElement.setAttribute('data-bs-theme', saved);
@@ -64,68 +60,76 @@ function renderNavItems(array $items, string $active): void
     <!-- Estilos personalizados -->
     <link href="../css/styles.css" rel="stylesheet">
 </head>
-<body>
-<div class="app-shell">
 
-    <!-- Sidebar offcanvas (mobile) -->
-    <div class="offcanvas offcanvas-start text-bg-sidebar" tabindex="-1" id="sidebarOffcanvas" aria-labelledby="sidebarOffcanvasLabel">
-        <div class="offcanvas-header">
-            <a href="index.php" class="brand" id="sidebarOffcanvasLabel">
+<body>
+    <div class="app-shell">
+
+        <!-- Sidebar offcanvas (mobile) -->
+        <div class="offcanvas offcanvas-start text-bg-sidebar" tabindex="-1" id="sidebarOffcanvas" aria-labelledby="sidebarOffcanvasLabel">
+            <div class="offcanvas-header">
+                <a href="index.php" class="brand" id="sidebarOffcanvasLabel">
+                    <i class="bi bi-car-front-fill"></i>
+                    <span>Auto Dealer</span>
+                </a>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
+            </div>
+            <div class="offcanvas-body d-flex flex-column">
+                <ul class="nav nav-pills flex-column gap-1">
+                    <?php renderNavItems($navItems, $activePage); ?>
+                </ul>
+                <div class="mt-auto pt-3 border-top border-secondary-subtle">
+                    <span class="text-muted small">Loja Auto Dealer &middot; painel interno</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar fixa (desktop) -->
+        <aside class="sidebar d-none d-lg-flex flex-column">
+            <a href="index.php" class="brand">
                 <i class="bi bi-car-front-fill"></i>
                 <span>Auto Dealer</span>
             </a>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
-        </div>
-        <div class="offcanvas-body d-flex flex-column">
-            <ul class="nav nav-pills flex-column gap-1">
+            <ul class="nav nav-pills flex-column gap-1 flex-grow-1">
                 <?php renderNavItems($navItems, $activePage); ?>
             </ul>
-            <div class="mt-auto pt-3 border-top border-secondary-subtle">
+            <div class="pt-3 border-top border-secondary-subtle">
                 <span class="text-muted small">Loja Auto Dealer &middot; painel interno</span>
             </div>
-        </div>
-    </div>
+        </aside>
 
-    <!-- Sidebar fixa (desktop) -->
-    <aside class="sidebar d-none d-lg-flex flex-column">
-        <a href="index.php" class="brand">
-            <i class="bi bi-car-front-fill"></i>
-            <span>Auto Dealer</span>
-        </a>
-        <ul class="nav nav-pills flex-column gap-1 flex-grow-1">
-            <?php renderNavItems($navItems, $activePage); ?>
-        </ul>
-        <div class="pt-3 border-top border-secondary-subtle">
-            <span class="text-muted small">Loja Auto Dealer &middot; painel interno</span>
-        </div>
-    </aside>
-
-    <div class="main-area">
-        <!-- Topbar -->
-        <nav class="topbar navbar">
-            <div class="container-fluid gap-2 px-3 px-lg-4">
-                <button class="btn btn-icon d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-label="Abrir menu">
-                    <i class="bi bi-list fs-4"></i>
-                </button>
-
-                <h1 class="page-title mb-0 d-none d-sm-block"><?= htmlspecialchars($pageTitle) ?></h1>
-
-                <div class="ms-auto d-flex align-items-center gap-2">
-                    <form class="d-none d-md-block" role="search" onsubmit="return false;">
-                        <div class="input-group">
-                            <span class="input-group-text bg-transparent border-end-0"><i class="bi bi-search"></i></span>
-                            <input type="search" class="form-control border-start-0 ps-0" placeholder="Buscar veículo, cliente...">
-                        </div>
-                    </form>
-
-                    <button class="btn btn-icon" type="button" id="themeToggle" aria-label="Alternar tema" title="Alternar tema">
-                        <i class="bi bi-moon-stars-fill" id="themeIconDark"></i>
-                        <i class="bi bi-sun-fill d-none" id="themeIconLight"></i>
+        <div class="main-area">
+            <!-- Topbar -->
+            <nav class="topbar navbar">
+                <div class="container-fluid gap-2 px-3 px-lg-4">
+                    <button class="btn btn-icon d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-label="Abrir menu">
+                        <i class="bi bi-list fs-4"></i>
                     </button>
 
-                    <div class="avatar-badge" title="Usuário">AD</div>
-                </div>
-            </div>
-        </nav>
+                    <h1 class="page-title mb-0 d-none d-sm-block"><?= htmlspecialchars($pageTitle) ?></h1>
 
-        <main class="content-area">
+                    <div class="ms-auto d-flex align-items-center gap-2">
+                        <form class="d-none d-md-block" role="search" onsubmit="return false;">
+                            <div class="input-group">
+                                <span class="input-group-text bg-transparent border-end-0"><i class="bi bi-search"></i></span>
+                                <input type="search" class="form-control border-start-0 ps-0" placeholder="Buscar veículo, cliente...">
+                            </div>
+                        </form>
+
+                        <button class="btn btn-icon" type="button" id="themeToggle" aria-label="Alternar tema" title="Alternar tema">
+                            <i class="bi bi-moon-stars-fill" id="themeIconDark"></i>
+                            <i class="bi bi-sun-fill d-none" id="themeIconLight"></i>
+                        </button>
+
+                        <div class="avatar-badge" title="Usuário">AD</div>
+                    </div>
+                </div>
+            </nav>
+
+            <main class="content-area">
+                <?php $flash = obterMensagem(); ?>
+                <?php if ($flash): ?>
+                    <div class="alert alert-<?= $flash['tipo'] === 'erro' ? 'danger' : 'success' ?> alert-dismissible fade show" role="alert">
+                        <?= htmlspecialchars($flash['texto']) ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                    </div>
+                <?php endif; ?>
