@@ -1,0 +1,115 @@
+# 🚗 Sistema de Gestão de Loja de Veículos (auto-dealer)
+
+Sistema web para gerenciamento interno de uma loja de veículos usados, controlando veículos disponíveis, clientes e vendas realizadas.
+
+> Projeto acadêmico — foco no gerenciamento interno da loja, e não em um marketplace público (estilo Webmotors).
+
+## 🎯 Objetivo
+
+Permitir que a loja controle:
+
+- Veículos disponíveis para venda
+- Clientes interessados
+- Vendas realizadas
+
+O sistema **não possui autenticação** inicialmente.
+
+## 🛠️ Tecnologias
+
+| Camada         | Tecnologia            |
+|----------------|------------------------|
+| Back-end       | PHP                    |
+| Banco de dados | MySQL                  |
+| Front-end      | HTML, CSS, JavaScript  |
+| Estilo         | Bootstrap              |
+| Dependências   | Composer               |
+| Versionamento  | Git / GitHub           |
+
+## ✅ Funcionalidades
+
+- Cadastrar veículos
+- Controlar veículos disponíveis
+- Cadastrar clientes
+- Registrar interesse em veículos
+- Registrar vendas
+- Alterar automaticamente o status do veículo após uma venda
+- Consultar histórico de vendas
+- Pesquisar e filtrar veículos
+- Visualizar indicadores da loja (dashboard)
+
+## 🗂️ Entregas do projeto
+
+| Entrega | Escopo |
+|---|---|
+| **AC1** | CRUD de veículos (criar, listar, editar, excluir) |
+| **AC2** | CRUD de clientes + interesse opcional em veículos |
+| **AC3** | Registro de vendas — a venda muda o status do veículo para "vendido" e impede vendê-lo novamente |
+| **Final** | Dashboard (disponíveis/vendidos, vendas no mês, total vendido), pesquisa/filtros de veículos e histórico de vendas |
+
+## 🗄️ Banco de dados
+
+Nome do banco: `auto_dealer`
+
+```
+CLIENTE
+   │
+   │ 1:N
+   ▼
+VENDA
+   ▲
+   │ N:1
+   │
+VEÍCULO
+```
+
+- **veiculos**: id, marca, modelo, ano, cor, quilometragem, preco, status
+- **clientes**: id, nome, cpf, telefone, email
+- **vendas**: id, cliente_id, veiculo_id, valor, data_venda
+- **interesses** *(opcional, AC2)*: cliente_id, veiculo_id
+
+Script completo em `database/schema.sql`.
+
+## 📁 Estrutura de pastas
+
+```
+auto-dealer/
+├── config/
+│   ├── connection.php   # conexão com o banco, lê as variáveis do .env
+├── css/
+│   └── styles.css
+├── src/
+│   └── index.php
+├── template/
+│   ├── footer.php
+│   └── header.php
+├── vendor/              # dependências instaladas pelo Composer
+├── README
+├── .env                 # credenciais do banco (não versionado)
+├── .gitignore
+├── composer.json
+└── composer.lock
+```
+
+## ▶️ Como executar
+
+1. Instale as dependências:
+   ```bash
+   composer install
+   ```
+2. Crie um arquivo `.env` na raiz do projeto com:
+   ```dotenv
+   DB_HOST=localhost
+   DB_PORT=3306
+   DB_DATABASE=auto_dealer
+   DB_USERNAME=root
+   DB_PASSWORD=
+   ```
+3. Crie o banco `auto_dealer` executando o script `database/schema.sql` no MySQL.
+4. Suba um servidor local a partir da pasta `src/`:
+   ```bash
+   php -S localhost:8000 -t src
+   ```
+5. Acesse `http://localhost:8000`.
+
+---
+Desenvolvido por [Patrick-Hoff](https://github.com/Patrick-Hoff)
