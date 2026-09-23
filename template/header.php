@@ -49,6 +49,8 @@ function renderNavItems(array $items, string $active): void
         })();
     </script>
 
+    <link rel="icon" href="../img/favicon.png" type="image/png">
+
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
