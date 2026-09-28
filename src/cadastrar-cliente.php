@@ -2,22 +2,9 @@
 $pageTitle  = 'Cadastrar cliente';
 $activePage = 'Clientes';
 require __DIR__ . '/../template/header.php';
+require __DIR__ . '/../models/cliente.php';
+require __DIR__ . '/../models/veiculo.php';
 
-// ==========================================================
-// MOCK DATA - remover quando o model/veiculo.php estiver pronto
-// Lista de veículos disponíveis para marcar como "interesse" do cliente
-// ==========================================================
-$veiculosDisponiveis = [
-    ['id' => 1, 'marca' => 'Toyota',     'modelo' => 'Corolla',  'ano' => 2022, 'preco' => 125000.00],
-    ['id' => 2, 'marca' => 'Honda',      'modelo' => 'Civic',    'ano' => 2021, 'preco' => 118000.00],
-    ['id' => 3, 'marca' => 'Volkswagen', 'modelo' => 'Gol',      'ano' => 2019, 'preco' => 58000.00],
-    ['id' => 4, 'marca' => 'Chevrolet',  'modelo' => 'Onix',     'ano' => 2023, 'preco' => 92000.00],
-    ['id' => 5, 'marca' => 'Fiat',       'modelo' => 'Argo',     'ano' => 2020, 'preco' => 68000.00],
-    ['id' => 6, 'marca' => 'Hyundai',    'modelo' => 'HB20',     'ano' => 2022, 'preco' => 79000.00],
-    ['id' => 7, 'marca' => 'Jeep',       'modelo' => 'Renegade', 'ano' => 2021, 'preco' => 115000.00],
-    ['id' => 8, 'marca' => 'Toyota',     'modelo' => 'Hilux',    'ano' => 2020, 'preco' => 210000.00],
-];
-// ==========================================================
 ?>
 
 <div class="mb-4">
@@ -104,7 +91,7 @@ $veiculosDisponiveis = [
 
             <div class="border rounded" style="max-height: 260px; overflow-y: auto;">
                 <ul class="list-group list-group-flush" id="listaVeiculosInteresse">
-                    <?php foreach ($veiculosDisponiveis as $v): ?>
+                    <?php foreach ($veiculos as $v): ?>
                         <li class="list-group-item"
                             data-busca="<?= htmlspecialchars(strtolower($v['marca'] . ' ' . $v['modelo'] . ' ' . $v['ano'])) ?>">
                             <div class="d-flex justify-content-between align-items-center">

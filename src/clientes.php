@@ -3,50 +3,7 @@ $pageTitle  = 'Clientes';
 $activePage = 'Clientes';
 // require __DIR__ . '/../models/cliente.php'; // TODO: reativar quando o back estiver pronto
 require __DIR__ . '/../template/header.php';
-
-// ==========================================================
-// MOCK DATA - remover este bloco quando o model/cliente.php
-// estiver pronto e passar a fornecer $clientes, $totalClientes,
-// $busca, $paginaAtual e $totalPaginas de verdade.
-// ==========================================================
-$clientesMock = [
-    ['id' => 1,  'nome' => 'Ana Beatriz Souza',      'cpf' => '11144477735', 'telefone' => '11987654321', 'email' => 'ana.souza@email.com'],
-    ['id' => 2,  'nome' => 'Bruno Carvalho Lima',     'cpf' => '22255588846', 'telefone' => '21976543210', 'email' => 'bruno.lima@email.com'],
-    ['id' => 3,  'nome' => 'Carla Mendes Ferreira',   'cpf' => '33366699957', 'telefone' => '31965432109', 'email' => 'carla.ferreira@email.com'],
-    ['id' => 4,  'nome' => 'Diego Ramos Oliveira',    'cpf' => '44477700068', 'telefone' => '41954321098', 'email' => 'diego.oliveira@email.com'],
-    ['id' => 5,  'nome' => 'Elaine Pires Gonçalves',  'cpf' => '55588811179', 'telefone' => '51943210987', 'email' => 'elaine.goncalves@email.com'],
-    ['id' => 6,  'nome' => 'Felipe Nunes Barbosa',    'cpf' => '66699922280', 'telefone' => '61932109876', 'email' => 'felipe.barbosa@email.com'],
-    ['id' => 7,  'nome' => 'Gabriela Rocha Martins',  'cpf' => '77700033391', 'telefone' => '71921098765', 'email' => 'gabriela.martins@email.com'],
-    ['id' => 8,  'nome' => 'Henrique Alves Teixeira', 'cpf' => '88811144402', 'telefone' => '81910987654', 'email' => 'henrique.teixeira@email.com'],
-    ['id' => 9,  'nome' => 'Isabela Costa Ribeiro',   'cpf' => '99922255513', 'telefone' => '91909876543', 'email' => 'isabela.ribeiro@email.com'],
-    ['id' => 10, 'nome' => 'João Pedro Santos',       'cpf' => '10033366624', 'telefone' => '19998765432', 'email' => 'joao.santos@email.com'],
-    ['id' => 11, 'nome' => 'Karina Duarte Moreira',   'cpf' => '12144470035', 'telefone' => '27987654321', 'email' => 'karina.moreira@email.com'],
-    ['id' => 12, 'nome' => 'Lucas Fonseca Azevedo',   'cpf' => '13255583146', 'telefone' => '48976543210', 'email' => 'lucas.azevedo@email.com'],
-];
-
-$busca      = trim($_GET['busca'] ?? '');
-$porPagina  = 5;
-$paginaAtual = max(1, (int) ($_GET['pagina'] ?? 1));
-
-$clientesFiltrados = $clientesMock;
-
-if ($busca !== '') {
-    $termo = mb_strtolower($busca);
-    $clientesFiltrados = array_values(array_filter($clientesMock, function ($c) use ($termo) {
-        $alvo = mb_strtolower($c['nome'] . ' ' . $c['cpf'] . ' ' . $c['telefone'] . ' ' . $c['email']);
-        return str_contains($alvo, $termo);
-    }));
-}
-
-$totalClientes = count($clientesFiltrados);
-$totalPaginas  = max(1, (int) ceil($totalClientes / $porPagina));
-$paginaAtual   = min($paginaAtual, $totalPaginas);
-
-$clientes = array_slice($clientesFiltrados, ($paginaAtual - 1) * $porPagina, $porPagina);
-// ==========================================================
-// FIM DO MOCK DATA
-// ==========================================================
-
+require __DIR__ . '/../models/cliente.php';
 
 function formatarCpf(string $cpf): string
 {

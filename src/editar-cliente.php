@@ -1,41 +1,17 @@
 <?php
 $pageTitle  = 'Editar cliente';
 $activePage = 'Clientes';
+require __DIR__ . '/../models/cliente.php';
+require __DIR__ . '/../models/veiculo.php';
 
-// ==========================================================
-// MOCK DATA - remover quando o model/cliente.php estiver pronto
-// Substituir por: $cliente = buscarClientePorId($id);
-//                 $veiculosInteresse = buscarInteressesDoCliente($id);
-// ==========================================================
-$clientesMock = [
-    1 => ['id' => 1, 'nome' => 'Ana Beatriz Souza', 'cpf' => '12345678909', 'telefone' => '11987654321', 'email' => 'ana.souza@email.com', 'veiculos_interesse' => [1, 4]],
-    2 => ['id' => 2, 'nome' => 'Carlos Eduardo Lima', 'cpf' => '98765432100', 'telefone' => '1133445566', 'email' => 'carlos.lima@email.com', 'veiculos_interesse' => []],
-];
-
-// Lista de veículos disponíveis para marcar como "interesse" do cliente
-$veiculosDisponiveis = [
-    ['id' => 1, 'marca' => 'Toyota',     'modelo' => 'Corolla',  'ano' => 2022, 'preco' => 125000.00],
-    ['id' => 2, 'marca' => 'Honda',      'modelo' => 'Civic',    'ano' => 2021, 'preco' => 118000.00],
-    ['id' => 3, 'marca' => 'Volkswagen', 'modelo' => 'Gol',      'ano' => 2019, 'preco' => 58000.00],
-    ['id' => 4, 'marca' => 'Chevrolet',  'modelo' => 'Onix',     'ano' => 2023, 'preco' => 92000.00],
-    ['id' => 5, 'marca' => 'Fiat',       'modelo' => 'Argo',     'ano' => 2020, 'preco' => 68000.00],
-    ['id' => 6, 'marca' => 'Hyundai',    'modelo' => 'HB20',     'ano' => 2022, 'preco' => 79000.00],
-    ['id' => 7, 'marca' => 'Jeep',       'modelo' => 'Renegade', 'ano' => 2021, 'preco' => 115000.00],
-    ['id' => 8, 'marca' => 'Toyota',     'modelo' => 'Hilux',    'ano' => 2020, 'preco' => 210000.00],
-];
-// ==========================================================
-
-// Recebe e valida o id do cliente (clientes.php -> editar-cliente.php?id=1)
-$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
-$cliente = $id ? ($clientesMock[$id] ?? null) : null;
-
-// Antes do require do header, pois o header já imprime HTML
 if (!$cliente) {
     header('Location: clientes.php');
     exit;
 }
 
-$veiculosInteresse = $cliente['veiculos_interesse'];
+print_r($veiculosInteresse);
+print_r($veiculos);
+
 
 require __DIR__ . '/../template/header.php';
 ?>
@@ -139,25 +115,27 @@ require __DIR__ . '/../template/header.php';
 
             <div class="border rounded" style="max-height: 260px; overflow-y: auto;">
                 <ul class="list-group list-group-flush" id="listaVeiculosInteresse">
-                    <?php foreach ($veiculosDisponiveis as $v): ?>
-                        <li class="list-group-item"
-                            data-busca="<?= htmlspecialchars(strtolower($v['marca'] . ' ' . $v['modelo'] . ' ' . $v['ano'])) ?>">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="form-check">
-                                    <input class="form-check-input"
-                                        type="checkbox"
-                                        name="veiculos_interesse[]"
-                                        value="<?= $v['id'] ?>"
-                                        id="veiculo<?= $v['id'] ?>"
-                                        <?= in_array($v['id'], $veiculosInteresse, true) ? 'checked' : '' ?>>
-                                    <label class="form-check-label" for="veiculo<?= $v['id'] ?>">
-                                        <?= htmlspecialchars($v['marca'] . ' ' . $v['modelo']) ?>
-                                        <span class="text-muted small">&middot; <?= $v['ano'] ?></span>
-                                    </label>
+                    <?php foreach ($veiculosInteresse as $vi): ?>
+                        <?php foreach ($veiculos as $v): ?>
+                            <li class="list-group-item"
+                                data-busca="<?= htmlspecialchars(strtolower($v['marca'] . ' ' . $v['modelo'] . ' ' . $v['ano'])) ?>">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="form-check">
+                                        <input class="form-check-input"
+                                            type="checkbox"
+                                            name="veiculos_interesse[]"
+                                            value="<?= $v['id'] ?>"
+                                            id="veiculo<?= $v['id'] ?>"
+                                            <?= $v['id'] == $vi ? 'checked' : '' ?>>
+                                        <label class="form-check-label" for="veiculo<?= $v['id'] ?>">
+                                            <?= htmlspecialchars($v['marca'] . ' ' . $v['modelo']) ?>
+                                            <span class="text-muted small">&middot; <?= $v['ano'] ?></span>
+                                        </label>
+                                    </div>
+                                    <span class="text-muted small">R$ <?= number_format($v['preco'], 2, ',', '.') ?></span>
                                 </div>
-                                <span class="text-muted small">R$ <?= number_format($v['preco'], 2, ',', '.') ?></span>
-                            </div>
-                        </li>
+                            </li>
+                        <?php endforeach; ?>
                     <?php endforeach; ?>
                 </ul>
                 <p class="text-muted text-center py-3 mb-0 d-none" id="listaVeiculosVazia">Nenhum veículo encontrado.</p>
