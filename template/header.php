@@ -6,7 +6,7 @@ $activePage = $activePage ?? 'dashboard';
 $navItems = [
     ['key' => 'dashboard', 'label' => 'Dashboard', 'icon' => 'bi-speedometer2', 'href' => 'index.php'],
     ['key' => 'veiculos',  'label' => 'Veículos',  'icon' => 'bi-car-front-fill', 'href' => 'veiculos.php'],
-    ['key' => 'clientes',  'label' => 'Clientes',  'icon' => 'bi-people-fill', 'href' => '#', 'disabled' => true],
+    ['key' => 'clientes',  'label' => 'Clientes',  'icon' => 'bi-people-fill', 'href' => 'clientes.php'],
     ['key' => 'vendas',    'label' => 'Vendas',    'icon' => 'bi-receipt', 'href' => '#', 'disabled' => true],
 ];
 
