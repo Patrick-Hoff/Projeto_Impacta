@@ -100,7 +100,7 @@ if (!empty($data)) {
     // PAGINAÇÃO
     // =====================================================
 
-    $porPagina = 10;
+    $porPagina = $porPagina ?? 10;
 
     $paginaAtual = filter_input(
         INPUT_GET,

@@ -113,13 +113,11 @@ require __DIR__ . '/../template/header.php';
             <div class="border rounded" style="max-height: 260px; overflow-y: auto;">
                 <ul class="list-group list-group-flush" id="listaVeiculosInteresse">
                     <?php foreach ($veiculos as $v): ?>
-                        <li class="list-group-item"
-                            data-busca="<?= htmlspecialchars(strtolower($v['marca'] . ' ' . $v['modelo'] . ' ' . $v['ano'])) ?>">
+                        <li class="list-group-item">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="form-check">
                                     <input class="form-check-input"
                                         type="checkbox"
-                                        name="veiculos_interesse[]"
                                         value="<?= $v['id'] ?>"
                                         id="veiculo<?= $v['id'] ?>"
                                         <?= in_array((int) $v['id'], $idsInteresse, true) ? 'checked' : '' ?>>
@@ -134,6 +132,13 @@ require __DIR__ . '/../template/header.php';
                     <?php endforeach; ?>
                 </ul>
                 <p class="text-muted text-center py-3 mb-0 d-none" id="listaVeiculosVazia">Nenhum veículo encontrado.</p>
+            </div>
+
+            <!-- Seleção completa que vai no POST (mantida pelo JS) -->
+            <div id="interessesSelecionados">
+                <?php foreach ($idsInteresse as $idInteresse): ?>
+                    <input type="hidden" name="veiculos_interesse[]" value="<?= (int) $idInteresse ?>">
+                <?php endforeach; ?>
             </div>
 
             <hr class="my-4">
@@ -152,8 +157,11 @@ require __DIR__ . '/../template/header.php';
 $pageScript = <<<'JS'
 (function () {
     iniciarFormCliente();
+    <script src="../js/veiculo-cliente.js"></script>
 })();
 JS;
+
+
 
 require __DIR__ . '/../template/footer.php';
 ?>

@@ -59,7 +59,8 @@ if (($data["type"] ?? null) === "create") {
 
     header("Location: ../src/clientes.php");
     exit;
-} else if (($data["type"] ?? null) === "update") {
+} else if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['type'] ?? '') === 'update') {
+    $data = $_POST;
 
     $nome     = $data["nome"];
     $cpf      = $data["cpf"];
@@ -67,26 +68,25 @@ if (($data["type"] ?? null) === "create") {
     $email    = $data["email"];
     $id       = (int) $data["id"];
 
-    // IDs marcados no formulário (se desmarcar todos, a chave não existe)
+    // IDs marcados (se desmarcar todos, a chave não existe no POST)
     $marcados = array_values(array_unique(array_map('intval', $data["veiculos_interesse"] ?? [])));
 
     try {
         $pdo->beginTransaction();
 
         // 1. Atualiza os dados do cliente
-        $query = "UPDATE clientes
-        SET nome = :nome, cpf = :cpf, telefone = :telefone, email = :email
-        WHERE id = :id";
+        $stmt = $pdo->prepare("UPDATE clientes
+            SET nome = :nome, cpf = :cpf, telefone = :telefone, email = :email
+            WHERE id = :id");
+        $stmt->execute([
+            ":nome"     => $nome,
+            ":cpf"      => $cpf,
+            ":telefone" => $telefone,
+            ":email"    => $email,
+            ":id"       => $id,
+        ]);
 
-        $stmt = $pdo->prepare($query);
-        $stmt->bindParam(":nome", $nome);
-        $stmt->bindParam(":cpf", $cpf);
-        $stmt->bindParam(":telefone", $telefone);
-        $stmt->bindParam(":email", $email);
-        $stmt->bindParam(":id", $id);
-        $stmt->execute();
-
-        // 2. Remove somente os veículos desmarcados
+        // 2. Remove somente os desmarcados
         if ($marcados) {
             $placeholders = implode(',', array_fill(0, count($marcados), '?'));
             $del = $pdo->prepare("DELETE FROM interesses WHERE cliente_id = ? AND veiculo_id NOT IN ($placeholders)");
@@ -110,7 +110,10 @@ if (($data["type"] ?? null) === "create") {
         header("Location: ../src/clientes.php");
         exit;
     } catch (Exception $e) {
-        $pdo->rollBack();
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
+        error_log($e->getMessage()); // para depurar: die($e->getMessage());
         definirMensagem("erro", "Erro ao atualizar o cliente.");
         header("Location: ../src/clientes.php");
         exit;
@@ -302,4 +305,85 @@ if (($data["type"] ?? null) === "create") {
         die('Erro ao consultar clientes: ' .
             $e->getMessage());
     }
+}
+
+
+
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['type'] ?? '') === 'update') {
+    $data = $_POST;
+
+    $nome     = $data["nome"];
+    $cpf      = $data["cpf"];
+    $telefone = $data["telefone"];
+    $email    = $data["email"];
+    $id       = (int) $data["id"];
+
+    // IDs marcados (se desmarcar todos, a chave não existe no POST)
+    $marcados = array_values(array_unique(array_map('intval', $data["veiculos_interesse"] ?? [])));
+
+    try {
+        $pdo->beginTransaction();
+
+        // 1. Atualiza os dados do cliente
+        $stmt = $pdo->prepare("UPDATE clientes
+            SET nome = :nome, cpf = :cpf, telefone = :telefone, email = :email
+            WHERE id = :id");
+        $stmt->execute([
+            ":nome"     => $nome,
+            ":cpf"      => $cpf,
+            ":telefone" => $telefone,
+            ":email"    => $email,
+            ":id"       => $id,
+        ]);
+
+        // 2. Remove somente os desmarcados
+        if ($marcados) {
+            $placeholders = implode(',', array_fill(0, count($marcados), '?'));
+            $del = $pdo->prepare("DELETE FROM interesses WHERE cliente_id = ? AND veiculo_id NOT IN ($placeholders)");
+            $del->execute(array_merge([$id], $marcados));
+        } else {
+            $del = $pdo->prepare("DELETE FROM interesses WHERE cliente_id = ?");
+            $del->execute([$id]);
+        }
+
+        // 3. Insere os marcados (os que já existem são ignorados)
+        if ($marcados) {
+            $ins = $pdo->prepare("INSERT IGNORE INTO interesses (cliente_id, veiculo_id) VALUES (?, ?)");
+            foreach ($marcados as $veiculoId) {
+                $ins->execute([$id, $veiculoId]);
+            }
+        }
+
+        $pdo->commit();
+
+        definirMensagem("sucesso", "Cliente atualizado com sucesso!");
+        header("Location: ../src/clientes.php");
+        exit;
+    } catch (Exception $e) {
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
+        error_log($e->getMessage()); // para depurar: die($e->getMessage());
+        definirMensagem("erro", "Erro ao atualizar o cliente.");
+        header("Location: ../src/clientes.php");
+        exit;
+    }
+}
+
+// ============================================================
+// 2) CARREGAR: usado quando editar-cliente.php dá require neste arquivo
+// ============================================================
+$cliente      = null;
+$idsInteresse = [];
+$id = $_GET["id"] ?? null;
+
+if ($id) {
+    $stmt = $pdo->prepare("SELECT * FROM clientes WHERE id = :id");
+    $stmt->execute(["id" => $id]);
+    $cliente = $stmt->fetch();
+
+    $stmt = $pdo->prepare("SELECT veiculo_id FROM interesses WHERE cliente_id = :cliente");
+    $stmt->execute([":cliente" => $id]);
+    $idsInteresse = array_map('intval', $stmt->fetchAll(PDO::FETCH_COLUMN));
 }
