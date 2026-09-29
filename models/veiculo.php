@@ -2,6 +2,8 @@
 require_once __DIR__ . '/../config/flash.php';
 include_once __DIR__ . "/../config/connection.php";
 
+$idsInteresse = array_map('intval', $veiculosInteresse ?? []);
+
 $data = $_POST;
 
 if (!empty($data)) {
