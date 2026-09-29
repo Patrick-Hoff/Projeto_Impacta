@@ -61,27 +61,60 @@ if (($data["type"] ?? null) === "create") {
     exit;
 } else if (($data["type"] ?? null) === "update") {
 
-    $nome = $data["nome"];
-    $cpf = $data["cpf"];
+    $nome     = $data["nome"];
+    $cpf      = $data["cpf"];
     $telefone = $data["telefone"];
-    $email = $data["email"];
+    $email    = $data["email"];
+    $id       = (int) $data["id"];
 
-    $query = "UPDATE clientes
+    // IDs marcados no formulário (se desmarcar todos, a chave não existe)
+    $marcados = array_values(array_unique(array_map('intval', $data["veiculos_interesse"] ?? [])));
+
+    try {
+        $pdo->beginTransaction();
+
+        // 1. Atualiza os dados do cliente
+        $query = "UPDATE clientes
         SET nome = :nome, cpf = :cpf, telefone = :telefone, email = :email
         WHERE id = :id";
 
-    $stmt = $pdo->prepare($query);
+        $stmt = $pdo->prepare($query);
+        $stmt->bindParam(":nome", $nome);
+        $stmt->bindParam(":cpf", $cpf);
+        $stmt->bindParam(":telefone", $telefone);
+        $stmt->bindParam(":email", $email);
+        $stmt->bindParam(":id", $id);
+        $stmt->execute();
 
-    $stmt->bindParam(":nome", $nome);
-    $stmt->bindParam(":cpf", $cpf);
-    $stmt->bindParam(":telefone", $telefone);
-    $stmt->bindParam(":email", $email);
+        // 2. Remove somente os veículos desmarcados
+        if ($marcados) {
+            $placeholders = implode(',', array_fill(0, count($marcados), '?'));
+            $del = $pdo->prepare("DELETE FROM interesses WHERE cliente_id = ? AND veiculo_id NOT IN ($placeholders)");
+            $del->execute(array_merge([$id], $marcados));
+        } else {
+            $del = $pdo->prepare("DELETE FROM interesses WHERE cliente_id = ?");
+            $del->execute([$id]);
+        }
 
-    $stmt->execute();
+        // 3. Insere os marcados (os que já existem são ignorados)
+        if ($marcados) {
+            $ins = $pdo->prepare("INSERT IGNORE INTO interesses (cliente_id, veiculo_id) VALUES (?, ?)");
+            foreach ($marcados as $veiculoId) {
+                $ins->execute([$id, $veiculoId]);
+            }
+        }
 
-    definirMensagem("sucesso", "Veículo atualizado com sucesso!");
-    header("Location: ../src/veiculos.php");
-    exit;
+        $pdo->commit();
+
+        definirMensagem("sucesso", "Cliente atualizado com sucesso!");
+        header("Location: ../src/clientes.php");
+        exit;
+    } catch (Exception $e) {
+        $pdo->rollBack();
+        definirMensagem("erro", "Erro ao atualizar o cliente.");
+        header("Location: ../src/clientes.php");
+        exit;
+    }
 } else if (($data["type"] ?? null) === "delete") {
 
     // Em desenvolvimento
