@@ -44,24 +44,6 @@ function iniciarFormCliente() {
     if (cpfDisplay.value) cpfDisplay.dispatchEvent(new Event('input'));
 
 
-    // ---------- Filtro da lista de veículos de interesse ----------
-    var buscaVeiculo = document.getElementById('buscaVeiculoInteresse');
-    var itensVeiculo = document.querySelectorAll('#listaVeiculosInteresse li');
-    var listaVazia = document.getElementById('listaVeiculosVazia');
-
-    buscaVeiculo.addEventListener('input', function () {
-        var termo = buscaVeiculo.value.trim().toLowerCase();
-        var algumVisivel = false;
-
-        itensVeiculo.forEach(function (item) {
-            var visivel = item.dataset.busca.includes(termo);
-            item.classList.toggle('d-none', !visivel);
-            if (visivel) algumVisivel = true;
-        });
-
-        listaVazia.classList.toggle('d-none', algumVisivel);
-    });
-
     // ---------- Validação geral no submit ----------
     form.addEventListener('submit', function (event) {
         var camposInvalidos = !form.checkValidity();
