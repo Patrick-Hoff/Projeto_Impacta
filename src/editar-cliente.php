@@ -9,10 +9,6 @@ if (!$cliente) {
     exit;
 }
 
-print_r($veiculosInteresse);
-print_r($veiculos);
-
-
 require __DIR__ . '/../template/header.php';
 ?>
 
@@ -113,29 +109,28 @@ require __DIR__ . '/../template/header.php';
                 </div>
             </div>
 
+
             <div class="border rounded" style="max-height: 260px; overflow-y: auto;">
                 <ul class="list-group list-group-flush" id="listaVeiculosInteresse">
-                    <?php foreach ($veiculosInteresse as $vi): ?>
-                        <?php foreach ($veiculos as $v): ?>
-                            <li class="list-group-item"
-                                data-busca="<?= htmlspecialchars(strtolower($v['marca'] . ' ' . $v['modelo'] . ' ' . $v['ano'])) ?>">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div class="form-check">
-                                        <input class="form-check-input"
-                                            type="checkbox"
-                                            name="veiculos_interesse[]"
-                                            value="<?= $v['id'] ?>"
-                                            id="veiculo<?= $v['id'] ?>"
-                                            <?= $v['id'] == $vi ? 'checked' : '' ?>>
-                                        <label class="form-check-label" for="veiculo<?= $v['id'] ?>">
-                                            <?= htmlspecialchars($v['marca'] . ' ' . $v['modelo']) ?>
-                                            <span class="text-muted small">&middot; <?= $v['ano'] ?></span>
-                                        </label>
-                                    </div>
-                                    <span class="text-muted small">R$ <?= number_format($v['preco'], 2, ',', '.') ?></span>
+                    <?php foreach ($veiculos as $v): ?>
+                        <li class="list-group-item"
+                            data-busca="<?= htmlspecialchars(strtolower($v['marca'] . ' ' . $v['modelo'] . ' ' . $v['ano'])) ?>">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="form-check">
+                                    <input class="form-check-input"
+                                        type="checkbox"
+                                        name="veiculos_interesse[]"
+                                        value="<?= $v['id'] ?>"
+                                        id="veiculo<?= $v['id'] ?>"
+                                        <?= in_array((int) $v['id'], $idsInteresse, true) ? 'checked' : '' ?>>
+                                    <label class="form-check-label" for="veiculo<?= $v['id'] ?>">
+                                        <?= htmlspecialchars($v['marca'] . ' ' . $v['modelo']) ?>
+                                        <span class="text-muted small">&middot; <?= $v['ano'] ?></span>
+                                    </label>
                                 </div>
-                            </li>
-                        <?php endforeach; ?>
+                                <span class="text-muted small">R$ <?= number_format($v['preco'], 2, ',', '.') ?></span>
+                            </div>
+                        </li>
                     <?php endforeach; ?>
                 </ul>
                 <p class="text-muted text-center py-3 mb-0 d-none" id="listaVeiculosVazia">Nenhum veículo encontrado.</p>
