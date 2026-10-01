@@ -120,8 +120,17 @@ if (($data["type"] ?? null) === "create") {
     }
 } else if (($data["type"] ?? null) === "delete") {
 
-    // Em desenvolvimento
+    $id = $data["id"];
 
+    $query = "DELETE FROM clientes WHERE id = :id";
+    $stmt = $pdo->prepare($query);
+    $stmt->bindParam(":id", $id);
+
+    $stmt->execute();
+
+    definirMensagem("sucesso", "Cliente excluído com sucesso!");
+    header("Location: ../src/clientes.php");
+    exit;
 } else {
 
     // Verificação edit
