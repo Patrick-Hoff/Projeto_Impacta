@@ -157,7 +157,6 @@ require __DIR__ . '/../template/header.php';
 $pageScript = <<<'JS'
 (function () {
     iniciarFormCliente();
-    <script src="../js/veiculo-cliente.js"></script>
 })();
 JS;
 
