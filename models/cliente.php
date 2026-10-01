@@ -125,21 +125,18 @@ if (($data["type"] ?? null) === "create") {
 } else {
 
     // Verificação edit
+    $cliente = null;
+    $idsInteresse = [];
     $id = $_GET["id"] ?? null;
 
     if ($id) {
         $stmt = $pdo->prepare("SELECT * FROM clientes WHERE id = :id");
         $stmt->execute(["id" => $id]);
-
         $cliente = $stmt->fetch();
 
-        $query = "SELECT veiculo_id FROM interesses WHERE cliente_id = :cliente";
-
-        $stmt = $pdo->prepare($query);
-
+        $stmt = $pdo->prepare("SELECT veiculo_id FROM interesses WHERE cliente_id = :cliente");
         $stmt->execute([":cliente" => $id]);
-
-        $veiculosInteresse = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        $idsInteresse = array_map('intval', $stmt->fetchAll(PDO::FETCH_COLUMN));
     }
 
     // =====================================================
@@ -369,21 +366,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['type'] ?? '') === 'update'
         header("Location: ../src/clientes.php");
         exit;
     }
-}
-
-// ============================================================
-// 2) CARREGAR: usado quando editar-cliente.php dá require neste arquivo
-// ============================================================
-$cliente      = null;
-$idsInteresse = [];
-$id = $_GET["id"] ?? null;
-
-if ($id) {
-    $stmt = $pdo->prepare("SELECT * FROM clientes WHERE id = :id");
-    $stmt->execute(["id" => $id]);
-    $cliente = $stmt->fetch();
-
-    $stmt = $pdo->prepare("SELECT veiculo_id FROM interesses WHERE cliente_id = :cliente");
-    $stmt->execute([":cliente" => $id]);
-    $idsInteresse = array_map('intval', $stmt->fetchAll(PDO::FETCH_COLUMN));
 }
