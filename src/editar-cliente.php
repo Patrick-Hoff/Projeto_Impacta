@@ -141,6 +141,41 @@ require __DIR__ . '/../template/header.php';
                 <?php endforeach; ?>
             </div>
 
+            <?php if ($totalPaginas > 1): ?>
+                <nav aria-label="Paginação de veículos" class="mt-4">
+                    <ul class="pagination justify-content-center mb-0">
+
+                        <?php
+                        function urlPagina(int $pagina): string
+                        {
+                            $params = $_GET;
+                            $params['pagina'] = $pagina;
+                            return '?' . http_build_query($params);
+                        }
+                        ?>
+
+                        <li class="page-item <?= $paginaAtual <= 1 ? 'disabled' : '' ?>">
+                            <a class="page-link" href="<?= urlPagina($paginaAtual - 1) ?>" aria-label="Anterior">
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+                        </li>
+
+                        <?php for ($p = 1; $p <= $totalPaginas; $p++): ?>
+                            <li class="page-item <?= $p === $paginaAtual ? 'active' : '' ?>">
+                                <a class="page-link" href="<?= urlPagina($p) ?>"><?= $p ?></a>
+                            </li>
+                        <?php endfor; ?>
+
+                        <li class="page-item <?= $paginaAtual >= $totalPaginas ? 'disabled' : '' ?>">
+                            <a class="page-link" href="<?= urlPagina($paginaAtual + 1) ?>" aria-label="Próxima">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+
+                    </ul>
+                </nav>
+            <?php endif; ?>
+
             <hr class="my-4">
 
             <div class="d-flex flex-column flex-sm-row justify-content-end gap-2">
