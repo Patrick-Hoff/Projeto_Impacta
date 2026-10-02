@@ -112,7 +112,6 @@ if (!empty($data)) {
         $paginaAtual = 1;
     }
 
-
     // =====================================================
     // FILTROS
     // =====================================================
@@ -146,6 +145,20 @@ if (!empty($data)) {
         $params[':busca_modelo'] = $termoBusca;
     }
 
+    // Filtro por IDs (usado pelo "Apenas marcados")
+    $idsFiltro = array_values(array_filter(array_map('intval', explode(',', $_GET['ids'] ?? ''))));
+
+    if ($idsFiltro) {
+        $placeholdersIds = [];
+
+        foreach ($idsFiltro as $i => $idVeiculo) {
+            $ph = ':id_filtro_' . $i;
+            $placeholdersIds[] = $ph;
+            $params[$ph] = $idVeiculo;
+        }
+
+        $where[] = 'id IN (' . implode(',', $placeholdersIds) . ')';
+    }
 
     // Filtro por status
     if ($status !== '') {

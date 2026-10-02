@@ -7,8 +7,10 @@ $_GET['busca'] = trim($_GET['q'] ?? '');
 // O id da URL é do cliente, então não pode ser usado como id de veículo
 unset($_GET['id']);
 
-// Opcional: mais resultados na busca (só funciona com a alteração do passo 1)
-// $porPagina = 30;
+// Com "apenas marcados", traz todos os selecionados (não só 10)
+if (!empty($_GET['ids'])) {
+    $porPagina = 200;
+}
 
 require __DIR__ . '/veiculo.php'; // gera $veiculos já filtrado
 

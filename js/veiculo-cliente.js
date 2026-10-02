@@ -3,6 +3,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const lista = document.getElementById('listaVeiculosInteresse');
     const vazio = document.getElementById('listaVeiculosVazia');
     const container = document.getElementById('interessesSelecionados');
+    const apenas = document.getElementById('apenasMarcados');
+    const paginacao = document.querySelector('nav[aria-label="Paginação de veículos"]');
 
     if (!busca || !lista || !container) return;
 
@@ -69,8 +71,27 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Chama o PHP em segundo plano (a URL da página não muda)
     async function pesquisar() {
+        const apenasMarcados = apenas && apenas.checked;
+        const termo = busca.value.trim();
+
+        // Enquanto filtra/busca, a paginação da página não faz sentido
+        if (paginacao) {
+            paginacao.classList.toggle('d-none', apenasMarcados || termo !== '');
+        }
+
+        // "Apenas marcados" sem nada marcado: lista vazia, sem chamar o PHP
+        if (apenasMarcados && selecionados.size === 0) {
+            desenhar([]);
+            return;
+        }
+
         try {
-            const url = '../models/buscar-veiculos.php?q=' + encodeURIComponent(busca.value.trim());
+            let url = '../models/buscar-veiculos.php?q=' + encodeURIComponent(termo);
+
+            if (apenasMarcados) {
+                url += '&ids=' + Array.from(selecionados).join(',');
+            }
+
             const resp = await fetch(url);
             desenhar(await resp.json());
         } catch (erro) {
@@ -84,6 +105,11 @@ document.addEventListener('DOMContentLoaded', function () {
         clearTimeout(timer);
         timer = setTimeout(pesquisar, 300);
     });
+
+    // Ligar/desligar o switch refaz a listagem na hora
+    if (apenas) {
+        apenas.addEventListener('change', pesquisar);
+    }
 
     // Enter no campo de busca não envia o formulário
     busca.addEventListener('keydown', function (e) {

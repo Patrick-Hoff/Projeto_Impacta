@@ -93,11 +93,12 @@ require __DIR__ . '/../template/header.php';
 
             <hr class="my-4">
 
-            <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
-                <div>
-                    <h3 class="h6 mb-1">Veículos de interesse</h3>
-                    <p class="text-muted small mb-0">Opcional. Marque os veículos que esse cliente tem interesse.</p>
+            <div class="d-flex align-items-center gap-2 flex-wrap mb-3">
+                <div class="form-check form-switch mb-0">
+                    <input class="form-check-input" type="checkbox" role="switch" id="apenasMarcados">
+                    <label class="form-check-label small" for="apenasMarcados">Apenas marcados</label>
                 </div>
+
                 <div class="input-group" style="max-width: 280px;">
                     <span class="input-group-text bg-transparent border-end-0">
                         <i class="bi bi-search"></i>
