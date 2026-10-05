@@ -1,6 +1,6 @@
 <?php
 $pageTitle  = 'Cadastrar cliente';
-$activePage = 'Clientes';
+$activePage = 'clientes';
 require __DIR__ . '/../template/header.php';
 require __DIR__ . '/../models/cliente.php';
 require __DIR__ . '/../models/veiculo.php';

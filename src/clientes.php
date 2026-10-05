@@ -1,6 +1,6 @@
 <?php
 $pageTitle  = 'Clientes';
-$activePage = 'Clientes';
+$activePage = 'clientes';
 // require __DIR__ . '/../models/cliente.php'; // TODO: reativar quando o back estiver pronto
 require __DIR__ . '/../template/header.php';
 require __DIR__ . '/../models/cliente.php';
