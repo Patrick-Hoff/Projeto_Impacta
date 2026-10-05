@@ -100,10 +100,7 @@ function formatarTelefone(string $telefone): string
                         <td><?= formatarCpf($c['cpf']) ?></td>
                         <td><?= formatarTelefone($c['telefone']) ?></td>
                         <td><?= htmlspecialchars($c['email']) ?></td>
-                        <td class="text-end">
-                            <a href="interesses-cliente.php?id=<?= $c['id'] ?>" class="btn btn-icon btn-sm" title="Interesse em veículos">
-                                <i class="bi bi-heart"></i>
-                            </a>
+                        <td class="text-end"> 
                             <a href="editar-cliente.php?id=<?= $c['id'] ?>" class="btn btn-icon btn-sm" title="Editar">
                                 <i class="bi bi-pencil"></i>
                             </a>
