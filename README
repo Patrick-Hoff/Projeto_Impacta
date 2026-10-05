@@ -16,14 +16,15 @@ O sistema **não possui autenticação** inicialmente.
 
 ## 🛠️ Tecnologias
 
-| Camada         | Tecnologia            |
-|----------------|------------------------|
-| Back-end       | PHP                    |
-| Banco de dados | MySQL                  |
-| Front-end      | HTML, CSS, JavaScript  |
-| Estilo         | Bootstrap              |
-| Dependências   | Composer               |
-| Versionamento  | Git / GitHub           |
+| Camada         | Tecnologia                         |
+|----------------|------------------------------------|
+| Back-end       | PHP                                |
+| Banco de dados | MySQL                              |
+| Front-end      | HTML, CSS, JavaScript              |
+| Estilo         | Bootstrap                          |
+| Servidor       | Apache (`.htaccess`) ou `php -S`   |
+| Dependências   | Composer                           |
+| Versionamento  | Git / GitHub                       |
 
 ## ✅ Funcionalidades
 
@@ -67,49 +68,109 @@ VEÍCULO
 - **vendas**: id, cliente_id, veiculo_id, valor, data_venda
 - **interesses** *(opcional, AC2)*: cliente_id, veiculo_id
 
-Script completo em `database/schema.sql`.
+Script completo em `auto_dealer.sql`.
 
 ## 📁 Estrutura de pastas
 
 ```
-auto-dealer/
+projeto_faculdade/
 ├── config/
-│   ├── connection.php   # conexão com o banco, lê as variáveis do .env
+│   ├── connection.php      # conexão com o banco, lê as variáveis do .env
+│   └── flash.php           # mensagens de feedback (flash messages)
 ├── css/
 │   └── styles.css
-├── src/
-│   └── index.php
+├── img/
+│   └── favicon.png
+├── js/
+│   ├── cliente-form.js
+│   ├── theme.js
+│   ├── veiculo-cliente.js
+│   └── veiculo-form.js
+├── models/                 # acesso a dados (usado via require)
+│   ├── buscar-veiculos.php
+│   ├── cliente.php
+│   └── veiculo.php
+├── src/                    # páginas da aplicação
+│   ├── cadastrar-cliente.php
+│   ├── cadastrar-veiculo.php
+│   ├── clientes.php
+│   ├── editar-cliente.php
+│   ├── editar-veiculo.php
+│   ├── index.php
+│   └── veiculos.php
 ├── template/
 │   ├── footer.php
 │   └── header.php
-├── vendor/              # dependências instaladas pelo Composer
-├── README
-├── .env                 # credenciais do banco (não versionado)
+├── vendor/                 # dependências instaladas pelo Composer
+├── .env                    # credenciais do banco (não versionado)
 ├── .gitignore
+├── .htaccess               # reescreve as URLs para não usar o src/
+├── router.php              # equivalente ao .htaccess para o php -S
+├── auto_dealer.sql         # script de criação do banco
 ├── composer.json
-└── composer.lock
+├── composer.lock
+└── README
 ```
+
+### 🔀 Rotas
+
+As páginas de `src/` são acessadas **sem** o prefixo `src/`:
+
+| URL | Arquivo |
+|---|---|
+| `/projeto_faculdade/` | `src/index.php` |
+| `/projeto_faculdade/veiculos.php` | `src/veiculos.php` |
+| `/projeto_faculdade/clientes.php` | `src/clientes.php` |
+
+Links, `action` de formulários e redirects usam caminhos absolutos a partir de `/projeto_faculdade/`.
 
 ## ▶️ Como executar
 
+### 1. Preparação (comum às duas opções)
+
 1. Instale as dependências:
-   ```bash
+```bash
    composer install
-   ```
+```
 2. Crie um arquivo `.env` na raiz do projeto com:
-   ```dotenv
+```dotenv
    DB_HOST=localhost
    DB_PORT=3306
    DB_DATABASE=auto_dealer
    DB_USERNAME=root
    DB_PASSWORD=
-   ```
-3. Crie o banco `auto_dealer` executando o script `database/schema.sql` no MySQL.
-4. Suba um servidor local
-   ```bash
-   php -S localhost:8000
-   ```
-5. Acesse `http://localhost:8000`.
+```
+3. Inicie o MySQL e importe o script `auto_dealer.sql` (pelo phpMyAdmin ou com `mysql < auto_dealer.sql`).
+
+### 2. Opção A: servidor embutido do PHP (Windows, Linux e macOS)
+
+```bash
+php -S localhost:8080 router.php
+```
+
+Acesse `http://localhost:8080/`.
+
+> O `router.php` é necessário porque o `php -S` não lê o `.htaccess`.
+
+### 3. Opção B: Apache (XAMPP no Windows ou apache2 no Linux)
+
+1. Clone o projeto em `C:\xampp\htdocs` (Windows) ou `/var/www/html` (Linux), **com o nome `projeto_faculdade`**:
+```bash
+   git clone https://github.com/Patrick-Hoff/auto-dealer.git projeto_faculdade
+```
+2. Ative o `mod_rewrite`:
+   - **XAMPP:** deixe `LoadModule rewrite_module modules/mod_rewrite.so` sem `#` no `httpd.conf`.
+   - **Linux:** `sudo a2enmod rewrite`.
+3. Use `AllowOverride All` no diretório do `htdocs` (XAMPP) ou `/var/www/` (Linux).
+4. Reinicie o Apache e acesse `http://localhost/projeto_faculdade/`.
+
+> Se usar outro nome de pasta, ajuste o `RewriteBase` no `.htaccess`.
+
+### ⚠️ Observações
+
+- No Linux, os nomes de arquivos diferenciam maiúsculas de minúsculas.
+- No Linux, o usuário `root` do MariaDB costuma não aceitar login por senha vazia via PHP. Crie um usuário próprio e ajuste o `.env`.
+- O `.env` não deve ser versionado.
 
 ---
 Desenvolvido por [Patrick-Hoff](https://github.com/Patrick-Hoff)
