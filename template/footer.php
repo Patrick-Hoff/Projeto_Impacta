@@ -6,16 +6,16 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
         <!-- Tema claro/escuro -->
-        <script src="../js/theme.js"></script>
+        <script src="js/theme.js"></script>
 
         <!-- Máscaras e validação do formulário de veículo -->
-        <script src="../js/veiculo-form.js"></script>
+        <script src="js/veiculo-form.js"></script>
 
         <!-- Máscaras e valicação do formulario de cliente -->
-        <script src="../js/cliente-form.js"></script>
+        <script src="js/cliente-form.js"></script>
 
         <!-- Js para pesquisar veiculos em segundo plano para marcar ou desmarcar o veiculo no cadastro do cliente -->
-        <script src="../js/veiculo-cliente.js"></script>
+        <script src="js/veiculo-cliente.js"></script>
 
         <!-- Fecha alertas automaticamente após alguns segundos -->
         <script>

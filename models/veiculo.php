@@ -37,7 +37,7 @@ if (!empty($data)) {
         $stmt->execute();
 
         definirMensagem("sucesso", "Veículo cadastrado com sucesso!");
-        header("Location: ../src/veiculos.php");
+        header("Location: /projeto_faculdade/veiculos.php");
         exit;
     } else if ($data["type"] === "update") {
 
@@ -68,7 +68,7 @@ if (!empty($data)) {
         $stmt->execute();
 
         definirMensagem("sucesso", "Veículo atualizado com sucesso!");
-        header("Location: ../src/veiculos.php");
+        header("Location: /projeto_faculdade/veiculos.php");
         exit;
     } else if ($data["type"] === "delete") {
 
@@ -81,7 +81,7 @@ if (!empty($data)) {
         $stmt->execute();
 
         definirMensagem("sucesso", "Veículo excluído com sucesso!");
-        header("Location: ../src/veiculos.php");
+        header("Location: /projeto_faculdade/veiculos.php");
         exit;
     }
 } else {

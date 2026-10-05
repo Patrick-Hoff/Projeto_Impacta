@@ -57,7 +57,7 @@ if (($data["type"] ?? null) === "create") {
         throw $e;
     }
 
-    header("Location: ../src/clientes.php");
+    header("Location: /projeto_faculdade/clientes.php");
     exit;
 } else if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['type'] ?? '') === 'update') {
     $data = $_POST;
@@ -107,7 +107,7 @@ if (($data["type"] ?? null) === "create") {
         $pdo->commit();
 
         definirMensagem("sucesso", "Cliente atualizado com sucesso!");
-        header("Location: ../src/clientes.php");
+        header("Location: /projeto_faculdade/clientes.php");
         exit;
     } catch (Exception $e) {
         if ($pdo->inTransaction()) {
@@ -115,7 +115,7 @@ if (($data["type"] ?? null) === "create") {
         }
         error_log($e->getMessage()); // para depurar: die($e->getMessage());
         definirMensagem("erro", "Erro ao atualizar o cliente.");
-        header("Location: ../src/clientes.php");
+        header("Location: /projeto_faculdade/clientes.php");
         exit;
     }
 } else if (($data["type"] ?? null) === "delete") {
@@ -129,7 +129,7 @@ if (($data["type"] ?? null) === "create") {
     $stmt->execute();
 
     definirMensagem("sucesso", "Cliente excluído com sucesso!");
-    header("Location: ../src/clientes.php");
+    header("Location: /projeto_faculdade/clientes.php");
     exit;
 } else {
 
@@ -364,7 +364,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['type'] ?? '') === 'update'
         $pdo->commit();
 
         definirMensagem("sucesso", "Cliente atualizado com sucesso!");
-        header("Location: ../src/clientes.php");
+        header("Location: /projeto_faculdade/clientes.php");
         exit;
     } catch (Exception $e) {
         if ($pdo->inTransaction()) {
@@ -372,7 +372,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['type'] ?? '') === 'update'
         }
         error_log($e->getMessage()); // para depurar: die($e->getMessage());
         definirMensagem("erro", "Erro ao atualizar o cliente.");
-        header("Location: ../src/clientes.php");
+        header("Location: /projeto_faculdade/clientes.php");
         exit;
     }
 }

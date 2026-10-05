@@ -29,7 +29,7 @@ require __DIR__ . '/../template/header.php';
             id="formVeiculo"
             class="needs-validation"
             method="post"
-            action="../models/veiculo.php">
+            action="/projeto_faculdade/models/veiculo.php">
             <div class="row g-3">
                 <input type="hidden" name="type" value="update">
                 <input type="hidden" name="id" value="<?= htmlspecialchars($veiculo['id']) ?>">

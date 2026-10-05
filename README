@@ -105,9 +105,9 @@ auto-dealer/
    DB_PASSWORD=
    ```
 3. Crie o banco `auto_dealer` executando o script `database/schema.sql` no MySQL.
-4. Suba um servidor local a partir da pasta `src/`:
+4. Suba um servidor local
    ```bash
-   php -S localhost:8000 -t src
+   php -S localhost:8000
    ```
 5. Acesse `http://localhost:8000`.
 

@@ -1,0 +1,9 @@
+RewriteEngine On
+
+RewriteBase /projeto_faculdade/
+
+DirectoryIndex src/index.php
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.+)$ src/$1 [L]

@@ -49,7 +49,7 @@ function renderNavItems(array $items, string $active): void
         })();
     </script>
 
-    <link rel="icon" href="../img/favicon.png" type="image/png">
+    <link rel="icon" href="img/favicon.png" type="image/png">
 
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -60,7 +60,7 @@ function renderNavItems(array $items, string $active): void
     <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Estilos personalizados -->
-    <link href="../css/styles.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
 </head>
 
 <body>

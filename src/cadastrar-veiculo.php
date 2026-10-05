@@ -18,7 +18,7 @@ require __DIR__ . '/../template/header.php';
 <div class="card">
     <div class="card-body p-3 p-lg-4">
         <form novalidate
-            action="../models/veiculo.php"
+            action="/projeto_faculdade/models/veiculo.php"
             method="post"
             id="formVeiculo"
             class="needs-validation">

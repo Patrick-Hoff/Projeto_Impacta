@@ -214,7 +214,7 @@ function formatarTelefone(string $telefone): string
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
 
-                <form method="POST" action="../models/cliente.php" class="d-inline">
+                <form method="POST" action="/projeto_faculdade/models/cliente.php" class="d-inline">
                     <input type="hidden" name="id" id="modalExcluirId">
                     <input type="hidden" name="type" value="delete">
                     <button type="submit" class="btn btn-danger d-inline-flex align-items-center gap-2">

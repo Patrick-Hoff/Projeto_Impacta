@@ -21,7 +21,7 @@ require __DIR__ . '/../models/veiculo.php';
 <div class="card">
     <div class="card-body p-3 p-lg-4">
         <form novalidate
-            action="../models/cliente.php"
+            action="/projeto_faculdade/models/cliente.php"
             method="post"
             id="formCliente"
             class="needs-validation">
