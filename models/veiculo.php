@@ -2,6 +2,8 @@
 require_once __DIR__ . '/../config/flash.php';
 include_once __DIR__ . "/../config/connection.php";
 
+$idsInteresse = array_map('intval', $idsInteresse ?? []);
+
 $data = $_POST;
 
 if (!empty($data)) {
@@ -98,7 +100,7 @@ if (!empty($data)) {
     // PAGINAÇÃO
     // =====================================================
 
-    $porPagina = 10;
+    $porPagina = $porPagina ?? 10;
 
     $paginaAtual = filter_input(
         INPUT_GET,
@@ -109,7 +111,6 @@ if (!empty($data)) {
     if (!$paginaAtual || $paginaAtual < 1) {
         $paginaAtual = 1;
     }
-
 
     // =====================================================
     // FILTROS
@@ -144,6 +145,20 @@ if (!empty($data)) {
         $params[':busca_modelo'] = $termoBusca;
     }
 
+    // Filtro por IDs (usado pelo "Apenas marcados")
+    $idsFiltro = array_values(array_filter(array_map('intval', explode(',', $_GET['ids'] ?? ''))));
+
+    if ($idsFiltro) {
+        $placeholdersIds = [];
+
+        foreach ($idsFiltro as $i => $idVeiculo) {
+            $ph = ':id_filtro_' . $i;
+            $placeholdersIds[] = $ph;
+            $params[$ph] = $idVeiculo;
+        }
+
+        $where[] = 'id IN (' . implode(',', $placeholdersIds) . ')';
+    }
 
     // Filtro por status
     if ($status !== '') {
