@@ -3,14 +3,6 @@ $pageTitle  = 'Registrar venda';
 $activePage = 'vendas';
 // require __DIR__ . '/../models/venda.php'; // TODO: reativar quando o back estiver pronto
 
-// ===================== DADOS MOCK (remover quando o back estiver pronto) =====================
-$clientesOpcoes = [
-    ['id' => 1, 'nome' => 'Ana Beatriz Souza',    'cpf' => '12345678901'],
-    ['id' => 2, 'nome' => 'Carlos Eduardo Lima',  'cpf' => '23456789012'],
-    ['id' => 3, 'nome' => 'Mariana Alves',        'cpf' => '34567890123'],
-    ['id' => 4, 'nome' => 'Roberto Nascimento',   'cpf' => '45678901234'],
-];
-
 $veiculosOpcoes = [
     ['id' => 1, 'marca' => 'Toyota',     'modelo' => 'Corolla XEi', 'ano' => 2021, 'cor' => 'Prata',    'preco' => '112500.00'],
     ['id' => 2, 'marca' => 'Honda',      'modelo' => 'Civic EXL',   'ano' => 2019, 'cor' => 'Preto',    'preco' => '98900.00'],
@@ -19,6 +11,7 @@ $veiculosOpcoes = [
 ];
 // =============================================================================================
 require __DIR__ . '/../template/header.php';
+require __DIR__ . '/../models/cliente.php';
 
 function formatarCpf(string $cpf): string
 {
@@ -26,7 +19,7 @@ function formatarCpf(string $cpf): string
     return substr($cpf, 0, 3) . '.' . substr($cpf, 3, 3) . '.' . substr($cpf, 6, 3) . '-' . substr($cpf, 9, 2);
 }
 
-$semClientes = empty($clientesOpcoes);
+$semClientes = empty($clientes);
 $semVeiculos = empty($veiculosOpcoes);
 ?>
 
@@ -66,16 +59,30 @@ $semVeiculos = empty($veiculosOpcoes);
                 <input type="hidden" name="type" value="create">
 
                 <div class="col-12 col-md-6">
-                    <label for="cliente_id" class="form-label">Cliente</label>
-                    <select class="form-select" id="cliente_id" name="cliente_id" required <?= $semClientes ? 'disabled' : '' ?>>
-                        <option value="" selected disabled>Selecione...</option>
-                        <?php foreach ($clientesOpcoes as $c): ?>
-                            <option value="<?= $c['id'] ?>">
-                                <?= htmlspecialchars($c['nome']) ?> &middot; <?= formatarCpf($c['cpf']) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                    <div class="invalid-feedback">Selecione o cliente.</div>
+                    <label for="buscaCliente" class="form-label">Cliente</label>
+
+                    <div class="position-relative">
+                        <input type="text"
+                            id="buscaCliente"
+                            class="form-control"
+                            placeholder="Digite o nome ou CPF..."
+                            autocomplete="off"
+                            role="combobox"
+                            aria-expanded="false"
+                            aria-controls="listaClientes"
+                            required
+                            <?= $semClientes ? 'disabled' : '' ?>>
+
+                        <!-- id do cliente escolhido: é este campo que vai no POST -->
+                        <input type="hidden" name="cliente_id" id="cliente_id">
+
+                        <div id="listaClientes"
+                            class="list-group position-absolute w-100 shadow-sm d-none"
+                            style="z-index: 1000; max-height: 240px; overflow-y: auto;"
+                            role="listbox"></div>
+
+                        <div class="invalid-feedback">Selecione um cliente da lista.</div>
+                    </div>
                 </div>
 
                 <div class="col-12 col-md-6">
@@ -137,6 +144,8 @@ document.addEventListener('DOMContentLoaded', function () {
     iniciarFormVenda();
 });
 JS;
-
-require __DIR__ . '/../template/footer.php';
 ?>
+
+<script src="/projeto_faculdade/js/venda-busca-cliente.js" defer></script>
+
+<?php require __DIR__ . '/../template/footer.php'; ?>
