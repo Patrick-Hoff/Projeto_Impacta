@@ -1,4 +1,4 @@
-        </main>
+</main>
         </div>
         </div>
 
@@ -16,6 +16,9 @@
 
         <!-- Js para pesquisar veiculos em segundo plano para marcar ou desmarcar o veiculo no cadastro do cliente -->
         <script src="js/veiculo-cliente.js"></script>
+
+        <!-- Máscara de valor, data padrão e validação do formulário de venda -->
+        <script src="js/venda-form.js"></script>
 
         <!-- Fecha alertas automaticamente após alguns segundos -->
         <script>
