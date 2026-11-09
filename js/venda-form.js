@@ -60,7 +60,7 @@ function iniciarFormVenda(config) {
 
     // ---------- Ao escolher o veículo, sugere o preço dele como valor da venda ----------
     function aoTrocarVeiculo() {
-        var opcao = veiculo.options[veiculo.selectedIndex];
+        var opcao = veiculo.options ? veiculo.options[veiculo.selectedIndex] : veiculo;
         var preco = opcao && opcao.dataset.preco ? Number(opcao.dataset.preco) : null;
 
         if (precoTabela) {

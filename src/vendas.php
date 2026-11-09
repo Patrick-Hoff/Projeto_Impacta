@@ -1,31 +1,7 @@
 <?php
 $pageTitle  = 'Vendas';
 $activePage = 'vendas';
-// require __DIR__ . '/../models/venda.php'; // TODO: reativar quando o back estiver pronto
-
-// ===================== DADOS MOCK (remover quando o back estiver pronto) =====================
-$vendasMock = [
-    ['id' => 12, 'cliente_nome' => 'Ana Beatriz Souza',   'veiculo_marca' => 'Toyota',     'veiculo_modelo' => 'Corolla XEi', 'veiculo_ano' => 2021, 'valor' => 112500.00, 'data_venda' => '2026-10-18'],
-    ['id' => 11, 'cliente_nome' => 'Carlos Eduardo Lima', 'veiculo_marca' => 'Honda',      'veiculo_modelo' => 'Civic EXL',   'veiculo_ano' => 2019, 'valor' => 98900.00,  'data_venda' => '2026-10-15'],
-    ['id' => 10, 'cliente_nome' => 'Mariana Alves',       'veiculo_marca' => 'Volkswagen', 'veiculo_modelo' => 'Polo TSI',    'veiculo_ano' => 2022, 'valor' => 87000.00,  'data_venda' => '2026-10-12'],
-    ['id' => 9,  'cliente_nome' => 'Roberto Nascimento',  'veiculo_marca' => 'Fiat',       'veiculo_modelo' => 'Toro Volcano', 'veiculo_ano' => 2020, 'valor' => 124990.00, 'data_venda' => '2026-10-09'],
-    ['id' => 8,  'cliente_nome' => 'Fernanda Ribeiro',    'veiculo_marca' => 'Chevrolet',  'veiculo_modelo' => 'Onix Premier', 'veiculo_ano' => 2023, 'valor' => 79500.00,  'data_venda' => '2026-10-05'],
-    ['id' => 7,  'cliente_nome' => 'João Pedro Martins',  'veiculo_marca' => 'Jeep',       'veiculo_modelo' => 'Renegade',    'veiculo_ano' => 2018, 'valor' => 76800.00,  'data_venda' => '2026-09-29'],
-    ['id' => 6,  'cliente_nome' => 'Luciana Prado',       'veiculo_marca' => 'Hyundai',    'veiculo_modelo' => 'HB20 Comfort', 'veiculo_ano' => 2021, 'valor' => 64200.00,  'data_venda' => '2026-09-24'],
-    ['id' => 5,  'cliente_nome' => 'Ana Beatriz Souza',   'veiculo_marca' => 'Renault',    'veiculo_modelo' => 'Kwid Zen',    'veiculo_ano' => 2022, 'valor' => 49900.00,  'data_venda' => '2026-09-20'],
-    ['id' => 4,  'cliente_nome' => 'Pedro Henrique Costa', 'veiculo_marca' => 'Ford',      'veiculo_modelo' => 'Ranger XLS',  'veiculo_ano' => 2017, 'valor' => 139000.00, 'data_venda' => '2026-09-14'],
-    ['id' => 3,  'cliente_nome' => 'Juliana Moraes',      'veiculo_marca' => 'Nissan',     'veiculo_modelo' => 'Kicks SV',    'veiculo_ano' => 2020, 'valor' => 88700.00,  'data_venda' => '2026-09-08'],
-    ['id' => 2,  'cliente_nome' => 'Carlos Eduardo Lima', 'veiculo_marca' => 'Toyota',     'veiculo_modelo' => 'Yaris XL',    'veiculo_ano' => 2019, 'valor' => 69900.00,  'data_venda' => '2026-09-02'],
-    ['id' => 1,  'cliente_nome' => 'Mariana Alves',       'veiculo_marca' => 'Honda',      'veiculo_modelo' => 'HR-V EX',     'veiculo_ano' => 2021, 'valor' => 119000.00, 'data_venda' => '2026-08-27'],
-];
-
-$porPagina    = 10;
-$totalVendas  = count($vendasMock);
-$totalPaginas = max(1, (int) ceil($totalVendas / $porPagina));
-$paginaAtual  = min($totalPaginas, max(1, (int) ($_GET['pagina'] ?? 1)));
-$vendas       = array_slice($vendasMock, ($paginaAtual - 1) * $porPagina, $porPagina);
-// =============================================================================================
-
+require __DIR__ . '/../models/venda.php';
 require __DIR__ . '/../template/header.php';
 
 function formatarPreco(float $valor): string

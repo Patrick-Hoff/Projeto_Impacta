@@ -1,17 +1,10 @@
 <?php
 $pageTitle  = 'Registrar venda';
 $activePage = 'vendas';
-// require __DIR__ . '/../models/venda.php'; // TODO: reativar quando o back estiver pronto
-
-$veiculosOpcoes = [
-    ['id' => 1, 'marca' => 'Toyota',     'modelo' => 'Corolla XEi', 'ano' => 2021, 'cor' => 'Prata',    'preco' => '112500.00'],
-    ['id' => 2, 'marca' => 'Honda',      'modelo' => 'Civic EXL',   'ano' => 2019, 'cor' => 'Preto',    'preco' => '98900.00'],
-    ['id' => 3, 'marca' => 'Volkswagen', 'modelo' => 'Polo TSI',    'ano' => 2022, 'cor' => 'Branco',   'preco' => '87000.00'],
-    ['id' => 4, 'marca' => 'Fiat',       'modelo' => 'Toro Volcano', 'ano' => 2020, 'cor' => 'Vermelho', 'preco' => '124990.00'],
-];
-// =============================================================================================
 require __DIR__ . '/../template/header.php';
 require __DIR__ . '/../models/cliente.php';
+$_GET['status'] = 'disponivel';
+require __DIR__ . '/../models/veiculo.php';
 
 function formatarCpf(string $cpf): string
 {
@@ -20,7 +13,7 @@ function formatarCpf(string $cpf): string
 }
 
 $semClientes = empty($clientes);
-$semVeiculos = empty($veiculosOpcoes);
+$semVeiculos = empty($veiculos);
 ?>
 
 <div class="mb-4">
@@ -85,17 +78,32 @@ $semVeiculos = empty($veiculosOpcoes);
                     </div>
                 </div>
 
+                <!-- Filtrar Veiculos -->
                 <div class="col-12 col-md-6">
-                    <label for="veiculo_id" class="form-label">Veículo</label>
-                    <select class="form-select" id="veiculo_id" name="veiculo_id" required <?= $semVeiculos ? 'disabled' : '' ?>>
-                        <option value="" selected disabled>Selecione...</option>
-                        <?php foreach ($veiculosOpcoes as $v): ?>
-                            <option value="<?= $v['id'] ?>" data-preco="<?= htmlspecialchars((string) $v['preco']) ?>">
-                                <?= htmlspecialchars($v['marca'] . ' ' . $v['modelo']) ?> &middot; <?= $v['ano'] ?> &middot; <?= htmlspecialchars($v['cor']) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                    <div class="invalid-feedback">Selecione um veículo disponível.</div>
+                    <label for="buscaVeiculo" class="form-label">Veiculo</label>
+
+                    <div class="position-relative">
+                        <input type="text"
+                            id="buscaVeiculo"
+                            class="form-control"
+                            placeholder="Digite o nome veiculo"
+                            autocomplete="off"
+                            role="combobox"
+                            aria-expanded="false"
+                            aria-controls="listaVeiculos"
+                            required
+                            <?= $semVeiculos ? 'disabled' : '' ?>>
+
+                        <!-- id do cliente escolhido: é este campo que vai no POST -->
+                        <input type="hidden" name="veiculo_id" id="veiculo_id">
+
+                        <div id="listaVeiculos"
+                            class="list-group position-absolute w-100 shadow-sm d-none"
+                            style="z-index: 1000; max-height: 240px; overflow-y: auto;"
+                            role="listbox"></div>
+
+                        <div class="invalid-feedback">Selecione um veiculo da lista.</div>
+                    </div>
                     <div class="form-text">
                         Somente veículos disponíveis. Ao salvar, o veículo é marcado como vendido.
                         <span id="precoTabela" class="d-block"></span>
@@ -146,6 +154,6 @@ document.addEventListener('DOMContentLoaded', function () {
 JS;
 ?>
 
-<script src="/projeto_faculdade/js/venda-busca-cliente.js" defer></script>
+<script src="/projeto_faculdade/js/venda-busca.js" defer></script>
 
 <?php require __DIR__ . '/../template/footer.php'; ?>

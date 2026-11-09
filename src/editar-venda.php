@@ -1,34 +1,10 @@
 <?php
 $pageTitle  = 'Editar venda';
 $activePage = 'vendas';
-// require __DIR__ . '/../models/venda.php'; // TODO: reativar quando o back estiver pronto
-
-// ===================== DADOS MOCK (remover quando o back estiver pronto) =====================
-$clientesOpcoes = [
-    ['id' => 1, 'nome' => 'Ana Beatriz Souza',    'cpf' => '12345678901'],
-    ['id' => 2, 'nome' => 'Carlos Eduardo Lima',  'cpf' => '23456789012'],
-    ['id' => 3, 'nome' => 'Mariana Alves',        'cpf' => '34567890123'],
-    ['id' => 4, 'nome' => 'Roberto Nascimento',   'cpf' => '45678901234'],
-];
-
-$veiculosOpcoes = [
-    ['id' => 1, 'marca' => 'Toyota',     'modelo' => 'Corolla XEi', 'ano' => 2021, 'cor' => 'Prata',    'preco' => '112500.00'],
-    ['id' => 2, 'marca' => 'Honda',      'modelo' => 'Civic EXL',   'ano' => 2019, 'cor' => 'Preto',    'preco' => '98900.00'],
-    ['id' => 3, 'marca' => 'Volkswagen', 'modelo' => 'Polo TSI',    'ano' => 2022, 'cor' => 'Branco',   'preco' => '87000.00'],
-    ['id' => 4, 'marca' => 'Fiat',       'modelo' => 'Toro Volcano', 'ano' => 2020, 'cor' => 'Vermelho', 'preco' => '124990.00'],
-];
-
-// Na edição, o veículo da venda (já vendido) também aparece no select
-$venda = [
-    'id'         => (int) ($_GET['id'] ?? 1),
-    'cliente_id' => 2,
-    'veiculo_id' => 2,
-    'valor'      => '95000.00',
-    'data_venda' => '2026-10-15',
-];
-// =============================================================================================
+require __DIR__ . '/../models/venda.php';
 
 if (empty($venda)) {
+    definirMensagem('erro', 'Venda não encontrada.');
     header('Location: vendas.php');
     exit;
 }
@@ -67,33 +43,61 @@ function formatarCpf(string $cpf): string
                 <input type="hidden" name="id" value="<?= (int) $venda['id'] ?>">
 
                 <div class="col-12 col-md-6">
-                    <label for="cliente_id" class="form-label">Cliente</label>
-                    <select class="form-select" id="cliente_id" name="cliente_id" required>
-                        <option value="" disabled>Selecione...</option>
-                        <?php foreach ($clientesOpcoes as $c): ?>
-                            <option value="<?= $c['id'] ?>" <?= (int) $venda['cliente_id'] === (int) $c['id'] ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($c['nome']) ?> &middot; <?= formatarCpf($c['cpf']) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                    <div class="invalid-feedback">Selecione o cliente.</div>
+                    <label for="buscaCliente" class="form-label">Cliente</label>
+
+                    <div class="position-relative">
+                        <input type="text"
+                            id="buscaCliente"
+                            class="form-control"
+                            placeholder="Digite o nome ou CPF..."
+                            autocomplete="off"
+                            role="combobox"
+                            aria-expanded="false"
+                            aria-controls="listaClientes"
+                            value="<?= htmlspecialchars($venda['cliente_nome'] . ' · ' . formatarCpf($venda['cliente_cpf'])) ?>"
+                            required>
+
+                        <input type="hidden" name="cliente_id" id="cliente_id" value="<?= (int) $venda['cliente_id'] ?>">
+
+                        <div id="listaClientes"
+                            class="list-group position-absolute w-100 shadow-sm d-none"
+                            style="z-index: 1000; max-height: 240px; overflow-y: auto;"
+                            role="listbox"></div>
+
+                        <div class="invalid-feedback">Selecione um cliente da lista.</div>
+                    </div>
                 </div>
 
                 <div class="col-12 col-md-6">
-                    <label for="veiculo_id" class="form-label">Veículo</label>
-                    <select class="form-select" id="veiculo_id" name="veiculo_id" required>
-                        <option value="" disabled>Selecione...</option>
-                        <?php foreach ($veiculosOpcoes as $v): ?>
-                            <option value="<?= $v['id'] ?>"
-                                data-preco="<?= htmlspecialchars((string) $v['preco']) ?>"
-                                <?= (int) $venda['veiculo_id'] === (int) $v['id'] ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($v['marca'] . ' ' . $v['modelo']) ?> &middot; <?= $v['ano'] ?> &middot; <?= htmlspecialchars($v['cor']) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                    <div class="invalid-feedback">Selecione um veículo disponível.</div>
+                    <label for="buscaVeiculo" class="form-label">Veículo</label>
+
+                    <div class="position-relative">
+                        <input type="text"
+                            id="buscaVeiculo"
+                            class="form-control"
+                            placeholder="Digite o nome veiculo"
+                            autocomplete="off"
+                            role="combobox"
+                            aria-expanded="false"
+                            aria-controls="listaVeiculos"
+                            value="<?= htmlspecialchars($venda['veiculo_marca'] . ' ' . $venda['veiculo_modelo'] . ' · ' . $venda['veiculo_ano']) ?>"
+                            required>
+
+                        <input type="hidden"
+                            name="veiculo_id"
+                            id="veiculo_id"
+                            value="<?= (int) $venda['veiculo_id'] ?>"
+                            data-preco="<?= htmlspecialchars((string) $venda['veiculo_preco']) ?>">
+
+                        <div id="listaVeiculos"
+                            class="list-group position-absolute w-100 shadow-sm d-none"
+                            style="z-index: 1000; max-height: 240px; overflow-y: auto;"
+                            role="listbox"></div>
+
+                        <div class="invalid-feedback">Selecione um veículo da lista.</div>
+                    </div>
                     <div class="form-text">
-                        Aparecem os veículos disponíveis e o veículo desta venda. O veículo escolhido fica marcado como vendido.
+                        A busca mostra somente veículos disponíveis. Ao trocar o veículo, o anterior volta a ficar disponível.
                         <span id="precoTabela" class="d-block"></span>
                     </div>
                 </div>
@@ -147,6 +151,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 JS;
-
-require __DIR__ . '/../template/footer.php';
 ?>
+
+<script src="/projeto_faculdade/js/venda-busca.js" defer></script>
+
+<?php require __DIR__ . '/../template/footer.php'; ?>

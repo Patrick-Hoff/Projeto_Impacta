@@ -1,11 +1,8 @@
 (function () {
-    const URL_BUSCA = '/projeto_faculdade/models/buscar-cliente.php';
-    const MSG_INVALIDO = 'Selecione um cliente da lista.';
-
-    function iniciarBuscaCliente() {
-        const input  = document.getElementById('buscaCliente');
-        const hidden = document.getElementById('cliente_id');
-        const lista  = document.getElementById('listaClientes');
+    function iniciarBusca(config) {
+        const input  = document.getElementById(config.input);
+        const hidden = document.getElementById(config.hidden);
+        const lista  = document.getElementById(config.lista);
         if (!input || !hidden || !lista) return;
 
         let timer = null;
@@ -13,7 +10,7 @@
         let ativo = -1;
 
         // Enquanto não escolher da lista, o campo é inválido
-        input.setCustomValidity(MSG_INVALIDO);
+        input.setCustomValidity(hidden.value ? '' : config.msgInvalido);
 
         function fechar() {
             lista.classList.add('d-none');
@@ -36,9 +33,11 @@
             }
         }
 
-        function selecionar(c) {
-            input.value  = `${c.nome} · ${c.cpf}`;
-            hidden.value = c.id;
+        function selecionar(item) {
+            input.value  = config.rotulo(item);
+            hidden.value = item.id;
+            if (config.aoSelecionar) config.aoSelecionar(item, hidden);
+            hidden.dispatchEvent(new Event('change'));
             input.setCustomValidity('');
             input.classList.remove('is-invalid');
             fechar();
@@ -46,27 +45,29 @@
 
         function limparSelecao() {
             hidden.value = '';
-            input.setCustomValidity(MSG_INVALIDO);
+            delete hidden.dataset.preco;
+            input.setCustomValidity(config.msgInvalido);
+            hidden.dispatchEvent(new Event('change'));
         }
 
-        function render(clientes) {
+        function render(itensEncontrados) {
             lista.innerHTML = '';
 
-            if (clientes.length === 0) {
+            if (itensEncontrados.length === 0) {
                 const vazio = document.createElement('div');
                 vazio.className = 'list-group-item text-muted small';
-                vazio.textContent = 'Nenhum cliente encontrado.';
+                vazio.textContent = config.msgVazio;
                 lista.appendChild(vazio);
             }
 
-            clientes.forEach(c => {
+            itensEncontrados.forEach(item => {
                 const btn = document.createElement('button');
                 btn.type = 'button';
                 btn.className = 'list-group-item list-group-item-action';
                 btn.setAttribute('role', 'option');
-                btn.textContent = `${c.nome} · ${c.cpf}`;   // textContent evita injeção de HTML
-                btn.addEventListener('click', () => selecionar(c));
-                btn._cliente = c;
+                btn.textContent = config.rotulo(item);   // textContent evita injeção de HTML
+                btn.addEventListener('click', () => selecionar(item));
+                btn._item = item;
                 lista.appendChild(btn);
             });
 
@@ -79,14 +80,18 @@
             controller = new AbortController();
 
             try {
-                const resp = await fetch(`${URL_BUSCA}?q=${encodeURIComponent(termo)}`, {
+                const resp = await fetch(config.url(termo), {
                     signal: controller.signal
                 });
                 if (!resp.ok) throw new Error('Falha na busca');
                 render(await resp.json());
             } catch (e) {
                 if (e.name === 'AbortError') return;
-                lista.innerHTML = '<div class="list-group-item text-danger small">Erro ao buscar clientes.</div>';
+                lista.innerHTML = '';
+                const erro = document.createElement('div');
+                erro.className = 'list-group-item text-danger small';
+                erro.textContent = config.msgErro;
+                lista.appendChild(erro);
                 abrir();
             }
         }
@@ -98,7 +103,7 @@
             timer = setTimeout(() => buscar(input.value.trim()), 300);
         });
 
-        // Ao focar sem cliente escolhido, já mostra sugestões
+        // Ao focar sem item escolhido, já mostra sugestões
         input.addEventListener('focus', function () {
             if (!hidden.value) buscar(input.value.trim());
         });
@@ -116,7 +121,7 @@
                 marcarAtivo(Math.max(ativo - 1, 0));
             } else if (e.key === 'Enter' && ativo >= 0) {
                 e.preventDefault();                       // não envia o formulário
-                selecionar(itens[ativo]._cliente);
+                selecionar(itens[ativo]._item);
             } else if (e.key === 'Escape') {
                 fechar();
             }
@@ -124,9 +129,34 @@
 
         // Clicou fora: fecha a lista
         document.addEventListener('click', function (e) {
-            if (!e.target.closest('#buscaCliente, #listaClientes')) fechar();
+            if (e.target !== input && !lista.contains(e.target)) fechar();
         });
     }
 
-    document.addEventListener('DOMContentLoaded', iniciarBuscaCliente);
+    document.addEventListener('DOMContentLoaded', function () {
+        iniciarBusca({
+            input: 'buscaCliente',
+            hidden: 'cliente_id',
+            lista: 'listaClientes',
+            url: termo => `/projeto_faculdade/models/buscar-cliente.php?q=${encodeURIComponent(termo)}`,
+            rotulo: c => `${c.nome} · ${c.cpf}`,
+            msgInvalido: 'Selecione um cliente da lista.',
+            msgVazio: 'Nenhum cliente encontrado.',
+            msgErro: 'Erro ao buscar clientes.'
+        });
+
+        iniciarBusca({
+            input: 'buscaVeiculo',
+            hidden: 'veiculo_id',
+            lista: 'listaVeiculos',
+            url: termo => `/projeto_faculdade/models/buscar-veiculos.php?status=disponivel&q=${encodeURIComponent(termo)}`,
+            rotulo: v => `${v.marca} ${v.modelo} · ${v.ano}`,
+            aoSelecionar: (v, hidden) => {
+                hidden.dataset.preco = v.preco.replace(/\./g, '').replace(',', '.');
+            },
+            msgInvalido: 'Selecione um veículo da lista.',
+            msgVazio: 'Nenhum veículo disponível encontrado.',
+            msgErro: 'Erro ao buscar veículos.'
+        });
+    });
 })();
