@@ -86,8 +86,8 @@ CREATE TABLE IF NOT EXISTS `vendas` (
   `valor` decimal(10,2) NOT NULL,
   `data_venda` date NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `cliente_id` (`cliente_id`),
-  KEY `veiculo_id` (`veiculo_id`)
+  UNIQUE KEY `uq_vendas_veiculo` (`veiculo_id`),
+  KEY `cliente_id` (`cliente_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 COMMIT;
 
