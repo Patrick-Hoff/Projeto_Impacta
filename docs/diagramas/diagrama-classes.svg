@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="640" viewBox="0 0 960 640" font-family="Arial, Helvetica, sans-serif" font-size="13">
+  <rect width="960" height="640" fill="#ffffff"/>
+  <style>
+    .box { fill: #ffffc8; stroke: #333; stroke-width: 1.3; }
+    .sep { stroke: #333; stroke-width: 1; }
+    .title { font-weight: bold; font-size: 14px; text-anchor: middle; }
+    .stereo { font-size: 12px; text-anchor: middle; }
+    .line { stroke: #333; stroke-width: 1.3; fill: none; }
+    .mult { font-size: 12px; }
+  </style>
+
+  <!-- ===== Cliente ===== -->
+  <g>
+    <rect class="box" x="40" y="40" width="250" height="306"/>
+    <text class="title" x="165" y="60">Cliente</text>
+    <line class="sep" x1="40" y1="70" x2="290" y2="70"/>
+    <text x="48" y="88">- id : int</text>
+    <text x="48" y="106">- nome : String</text>
+    <text x="48" y="124">- cpf : String</text>
+    <text x="48" y="142">- telefone : String</text>
+    <text x="48" y="160">- email : String</text>
+    <text x="48" y="178">- interesses : Veiculo[]</text>
+    <line class="sep" x1="40" y1="190" x2="290" y2="190"/>
+    <text x="48" y="208">+ getNome() : String</text>
+    <text x="48" y="226">+ getCpf() : String</text>
+    <text x="48" y="244">+ getTelefone() : String</text>
+    <text x="48" y="262">+ getEmail() : String</text>
+    <text x="48" y="280">+ getInteresses() : Veiculo[]</text>
+    <text x="48" y="298">+ cadastrar() : void</text>
+    <text x="48" y="316">+ editar() : void</text>
+    <text x="48" y="334">+ excluir() : void</text>
+  </g>
+
+  <!-- ===== Venda ===== -->
+  <g>
+    <rect class="box" x="360" y="40" width="240" height="270"/>
+    <text class="title" x="480" y="60">Venda</text>
+    <line class="sep" x1="360" y1="70" x2="600" y2="70"/>
+    <text x="368" y="88">- id : int</text>
+    <text x="368" y="106">- cliente : Cliente</text>
+    <text x="368" y="124">- veiculo : Veiculo</text>
+    <text x="368" y="142">- valor : float</text>
+    <text x="368" y="160">- dataVenda : Date</text>
+    <line class="sep" x1="360" y1="172" x2="600" y2="172"/>
+    <text x="368" y="190">+ getCliente() : Cliente</text>
+    <text x="368" y="208">+ getVeiculo() : Veiculo</text>
+    <text x="368" y="226">+ getValor() : float</text>
+    <text x="368" y="244">+ getDataVenda() : Date</text>
+    <text x="368" y="262">+ registrar() : void</text>
+    <text x="368" y="280">+ editar() : void</text>
+    <text x="368" y="298">+ excluir() : void</text>
+  </g>
+
+  <!-- ===== Veiculo ===== -->
+  <g>
+    <rect class="box" x="670" y="40" width="250" height="378"/>
+    <text class="title" x="795" y="60">Veiculo</text>
+    <line class="sep" x1="670" y1="70" x2="920" y2="70"/>
+    <text x="678" y="88">- id : int</text>
+    <text x="678" y="106">- marca : String</text>
+    <text x="678" y="124">- modelo : String</text>
+    <text x="678" y="142">- ano : int</text>
+    <text x="678" y="160">- cor : String</text>
+    <text x="678" y="178">- quilometragem : String</text>
+    <text x="678" y="196">- preco : float</text>
+    <text x="678" y="214">- status : StatusVeiculo</text>
+    <line class="sep" x1="670" y1="226" x2="920" y2="226"/>
+    <text x="678" y="244">+ getMarca() : String</text>
+    <text x="678" y="262">+ getModelo() : String</text>
+    <text x="678" y="280">+ getAno() : int</text>
+    <text x="678" y="298">+ getPreco() : float</text>
+    <text x="678" y="316">+ getStatus() : StatusVeiculo</text>
+    <text x="678" y="334">+ cadastrar() : void</text>
+    <text x="678" y="352">+ editar() : void</text>
+    <text x="678" y="370">+ excluir() : void</text>
+    <text x="678" y="388">+ marcarVendido() : void</text>
+    <text x="678" y="406">+ marcarDisponivel() : void</text>
+  </g>
+
+  <!-- ===== StatusVeiculo (enum) ===== -->
+  <g>
+    <rect class="box" x="390" y="340" width="190" height="96"/>
+    <text class="stereo" x="485" y="357">«enumeration»</text>
+    <text class="title" x="485" y="374">StatusVeiculo</text>
+    <line class="sep" x1="390" y1="382" x2="580" y2="382"/>
+    <text x="398" y="400">DISPONIVEL</text>
+    <text x="398" y="418">VENDIDO</text>
+  </g>
+
+  <!-- ===== Interesse (classe de associação) ===== -->
+  <g>
+    <rect class="box" x="385" y="520" width="200" height="90"/>
+    <text class="title" x="485" y="540">Interesse</text>
+    <line class="sep" x1="385" y1="550" x2="585" y2="550"/>
+    <text x="393" y="568">- cliente : Cliente</text>
+    <text x="393" y="586">- veiculo : Veiculo</text>
+    <line class="sep" x1="385" y1="598" x2="585" y2="598"/>
+  </g>
+
+  <!-- Cliente 1 —— 0..* Venda -->
+  <line class="line" x1="290" y1="110" x2="360" y2="110"/>
+  <text class="mult" x="296" y="104">1</text>
+  <text class="mult" x="326" y="126">0..*</text>
+  <text class="mult" x="300" y="146" font-style="italic">realiza</text>
+
+  <!-- Venda 0..1 —— 1 Veiculo -->
+  <line class="line" x1="600" y1="110" x2="670" y2="110"/>
+  <text class="mult" x="606" y="104">0..1</text>
+  <text class="mult" x="656" y="126">1</text>
+  <text class="mult" x="612" y="146" font-style="italic">contém</text>
+
+  <!-- Veiculo —— StatusVeiculo -->
+  <line class="line" x1="670" y1="388" x2="580" y2="388"/>
+  <polyline class="line" points="592,382 580,388 592,394"/>
+
+  <!-- Cliente * —— * Veiculo (interesse) -->
+  <polyline class="line" points="165,346 165,480 795,480 795,418"/>
+  <text class="mult" x="171" y="364">0..*</text>
+  <text class="mult" x="801" y="436">0..*</text>
+  <text class="mult" x="230" y="474" font-style="italic">tem interesse em</text>
+  <line class="line" x1="485" y1="480" x2="485" y2="520" stroke-dasharray="5,4"/>
+</svg>
